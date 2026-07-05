@@ -1,7 +1,6 @@
 export interface KungfuFaction {
   id: string;
   name: string;
-  englishName: string;
   faction: string;
   origin: string;
   philosophy: string;
@@ -15,14 +14,13 @@ export interface KungfuFaction {
 export const KUNGFU_FACTIONS: KungfuFaction[] = [
   {
     id: "shaolin",
-    name: "少林派",
-    englishName: "Shaolin",
+    name: "Shaolin",
     faction: "Orthodox Buddhist",
     origin: "Mount Song, Henan (c. 5th century CE). A monk from the West arrived, saw the monks were in terrible shape, and invented martial arts because the Wi-Fi was out.",
     philosophy:
       "Zen and fists are one. Achieve enlightenment through punching and being punched. The body is a temple; the temple can also throw hands.",
     signatureTechniques: [
-      "Arhat Fist (十八罗汉拳)",
+      "Arhat Fist",
       "Sweeping Leg of Regret",
       "Iron Headbutt of Piety",
     ],
@@ -38,15 +36,14 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
   },
   {
     id: "wudang",
-    name: "武当派",
-    englishName: "Wudang",
+    name: "Wudang",
     faction: "Orthodox Taoist",
     origin:
       "Mount Wudang, Hubei. Founded by a man who decided flowing robes and slow movements were, in fact, the peak of violence.",
     philosophy:
       "Use softness to overcome hardness. Win the fight by arriving late to it and yawning. The opponent's strength is the opponent's problem.",
     signatureTechniques: [
-      "Tai Chi Chuan (太极拳)",
+      "Tai Chi Chuan",
       "Wudang Sword of Inner Peace",
       "Yielding Push That Ruins Lives",
     ],
@@ -58,15 +55,14 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
   },
   {
     id: "emei",
-    name: "峨眉派",
-    englishName: "Emei",
+    name: "Emei",
     faction: "Orthodox (mostly)",
     origin:
       "Mount Emei, Sichuan. A school famous for elite swordswomen who kindly request you not make a 'mountain out of a molehill' joke.",
     philosophy:
       "Speed, grace, and a sharp blade. True elegance is making your opponent look clumsy before they fall.",
     signatureTechniques: [
-      "Emei Piercing Sword (峨眉刺)",
+      "Emei Piercing Sword",
       "Thousand-Mile Eyebrow Raise",
       "Disapproving Sigh Slash",
     ],
@@ -78,16 +74,15 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
   },
   {
     id: "beggar",
-    name: "丐帮",
-    englishName: "Beggar's Sect",
+    name: "Beggar's Sect",
     faction: "Orthodox, surprisingly",
     origin:
       "Everywhere there are hungry people, which is everywhere. The largest martial organization in the jianghu and the only one with an all-you-can-eat buffet membership.",
     philosophy:
       "Solidarity of the downtrodden. Also: hitting people with a stick. The stick is key.",
     signatureTechniques: [
-      "Eighteen Dragon-Subduing Palms (降龙十八掌)",
-      "Dog-Beating Staff Technique (打狗棒法)",
+      "Eighteen Dragon-Subduing Palms",
+      "Dog-Beating Staff Technique",
       "Strategic Asking-For-Spare-Change Feint",
     ],
     famousPractitioners: [
@@ -102,8 +97,7 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
   },
   {
     id: "tang",
-    name: "唐门",
-    englishName: "Tang Sect",
+    name: "Tang Sect",
     faction: "Unorthodox",
     origin:
       "Sichuan. A family business of hidden weapons and poison that takes 'don't bring a knife to a gunfight' to its logical, poisoned conclusion.",
@@ -122,15 +116,14 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
   },
   {
     id: "ancient-tomb",
-    name: "古墓派",
-    englishName: "Ancient Tomb Sect",
+    name: "Ancient Tomb Sect",
     faction: "Hermitic",
     origin:
       "A literal tomb, because training in a normal location was too cheerful. Founded by someone who took 'resting in peace' as a lifestyle suggestion.",
     philosophy:
       "Sever all worldly ties. If you must love, love tragically. If you must fight, fight beautifully and then cry about it.",
     signatureTechniques: [
-      "Jade Maiden Sutra (玉女心经)",
+      "Jade Maiden Sutra",
       "Heart of Frozen Tears",
       "The Longing Stare (debuff: opponent is now sad)",
     ],
@@ -146,15 +139,14 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
   },
   {
     id: "ming-cult",
-    name: "明教",
-    englishName: "Ming Cult",
+    name: "Ming Cult",
     faction: "The 'Evil Cult' (translation: not invited to the orthodox parties)",
     origin:
       "Persia, originally. Came to China, got labeled evil, decided to lean into it for branding reasons.",
     philosophy:
       "Light will conquer darkness. The orthodox sects called us evil first, so we got matching outfits and a great anthem. Haters make you famous.",
     signatureTechniques: [
-      "Heaven and Earth Great Shift (乾坤大挪移)",
+      "Heaven and Earth Great Shift",
       "Solar Flame Saber",
       "Coordinated Group Disapproval",
     ],
@@ -170,15 +162,14 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
   },
   {
     id: "huashan",
-    name: "华山派",
-    englishName: "Huashan Sword Sect",
+    name: "Huashan Sword Sect",
     faction: "Orthodox (when they're not arguing)",
     origin:
       "Mount Hua, Shaanxi. A prestigious sword school famous for, of all things, a debate so fierce it split the school in two. Over a manual.",
     philosophy:
       "The sword is mightier than the pen. The pen, however, started the fight.",
     signatureTechniques: [
-      "Huashan Swordsmanship (华山剑法)",
+      "Huashan Swordsmanship",
       "Jade Maiden Nineteen Stances",
       "The Pointed Comment",
     ],

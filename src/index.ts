@@ -21,7 +21,7 @@ server.registerTool(
   async () => {
     const roster = KUNGFU_FACTIONS.map(
       (s) =>
-        `- ${s.id}  ${s.name} (${s.englishName})  [threat ${s.threatLevel}/10]  "${s.catchphrase}"`,
+        `- ${s.id}  ${s.name}  [threat ${s.threatLevel}/10]  "${s.catchphrase}"`,
     ).join("\n");
 
     const text = [
@@ -79,7 +79,7 @@ server.registerTool(
 function formatDossier(s: KungfuFaction): string {
   return [
     `╔══════════════════════════════════════════════════════════╗`,
-    `║  ${s.name}  ${s.englishName}                          `,
+    `║  ${s.name}                          `,
     `╚══════════════════════════════════════════════════════════╝`,
     `Faction:          ${s.faction}`,
     `Threat Level:     ${s.threatLevel}/10  (${threatLabel(s.threatLevel)})`,
@@ -139,7 +139,7 @@ server.registerTool(
         content: [
           {
             type: "text",
-            text: `${a.englishName} cannot spar ${a.englishName}. That is called 'practice' and the jianghu frowns on it being dramatized.`,
+            text: `${a.name} cannot spar ${a.name}. That is called 'practice' and the jianghu frowns on it being dramatized.`,
           },
         ],
       };
@@ -157,24 +157,24 @@ function narrateSpar(a: KungfuFaction, b: KungfuFaction): string {
   const winner = a.threatLevel > b.threatLevel ? a : a.threatLevel < b.threatLevel ? b : null;
 
   const rounds = [
-    `Round 1: ${a.englishName} opens with ${a.signatureTechniques[0]}. ${b.englishName} responds with ${b.signatureTechniques[0]}. The crowd gasps. A chicken flees.`,
-    `Round 2: ${a.englishName}'s philosophy ("${truncate(a.philosophy)}") meets ${b.englishName}'s philosophy ("${truncate(
+    `Round 1: ${a.name} opens with ${a.signatureTechniques[0]}. ${b.name} responds with ${b.signatureTechniques[0]}. The crowd gasps. A chicken flees.`,
+    `Round 2: ${a.name}'s philosophy ("${truncate(a.philosophy)}") meets ${b.name}'s philosophy ("${truncate(
       b.philosophy,
     )}"). Neither yields. The referee yields, emotionally.`,
-    `Round 3: ${a.englishName} deploys ${pick(a.signatureTechniques)}. ${b.englishName} counters with ${pick(
+    `Round 3: ${a.name} deploys ${pick(a.signatureTechniques)}. ${b.name} counters with ${pick(
       b.signatureTechniques,
     )}. Somewhere, a master sighs and pours tea.`,
   ];
 
   const verdict = winner
-    ? `Verdict: ${winner.englishName} wins on threat level (${winner.threatLevel} vs ${
+    ? `Verdict: ${winner.name} wins on threat level (${winner.threatLevel} vs ${
         winner.id === a.id ? b.threatLevel : a.threatLevel
-      }). As ${winner.englishName} says: "${winner.catchphrase}"`
+      }). As ${winner.name} says: "${winner.catchphrase}"`
     : `Verdict: A draw. Both factions retreat to write poetry about the affair. The jianghu declares it "a classic."`;
 
   return [
     `╔══════════════════════════════════════════════════════════╗`,
-    `║  EXHIBITION SPAR: ${a.englishName} vs ${b.englishName}`.padEnd(60),
+    `║  EXHIBITION SPAR: ${a.name} vs ${b.name}`.padEnd(60),
     `╚══════════════════════════════════════════════════════════╝`,
     ``,
     ...rounds,
