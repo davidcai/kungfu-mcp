@@ -1,0 +1,21 @@
+{
+  "name": "kungfu-mcp",
+  "version": "1.0.0",
+  "description": "A humorous MCP server that catalogs major kungfu factions and narrates sparring matches. For presentation demos.",
+  "type": "module",
+  "bin": {
+    "kungfu-mcp": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod 755 build/index.js",
+    "start": "npx @modelcontextprotocol/inspector node build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}
