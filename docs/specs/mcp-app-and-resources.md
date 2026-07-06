@@ -191,3 +191,14 @@ Requires `cloudflared` tunnel + a paid Claude plan (Pro/Max/Team). Documented in
 | Chinese in resources | Strip | Consistent with README's English-only decision for user-facing surfaces |
 | Framework | Vanilla TS + CSS | Dependency-light, easy to read for a demo |
 | `data.ts` Chinese | Keep unchanged | Source of truth; stripping happens at resource render time |
+
+---
+
+## Addendum — post-build simplification (2026-07-05)
+
+Implemented after the initial build; supersedes the file map and two decisions above:
+
+- `src/registry.ts` was split by primitive: `src/tools.ts` (tools), `src/resources.ts` (data resources), `src/app.ts` (app tool + `ui://` resource). `server.ts` calls the three registrars directly.
+- `list_factions` and `spar` now declare an `outputSchema` and return `structuredContent` alongside the humorous text. The app UI consumes the structured data instead of regex-parsing prose, and the server's `winnerId` is the single source of truth for the arena verdict.
+- Shared markdown formatting (`threatLabel`, `rosterMarkdown`, `dossierMarkdown`) lives in `src/format.ts`, used by tools, resources, and the UI bundle. Tools return the same markdown as resources.
+- The "strip Chinese at render time" decision is obsolete: `data.ts` is English-only, so the defensive `stripChinese` pass was removed.

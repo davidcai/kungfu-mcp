@@ -27,9 +27,9 @@ Apps require HTTP transport, so the server runs on `StreamableHTTPServerTranspor
 
 | Tool             | Arguments                  | What it does                                              |
 | ---------------- | -------------------------- | -------------------------------------------------------- |
-| `list_factions`  | _(none)_                   | Returns the full roster as a compact briefing.           |
-| `get_faction`    | `id: string`               | Returns the full (humorous) dossier for one faction.    |
-| `spar`           | `faction_a, faction_b: string` | Narrates a biased, non-canonical sparring match.      |
+| `list_factions`  | _(none)_                   | Roster as markdown + `structuredContent` (`{ factions }`) for the UI. |
+| `get_faction`    | `id: string`               | Returns the full (humorous) dossier for one faction as markdown. |
+| `spar`           | `faction_a, faction_b: string` | Biased narration + `structuredContent` (`{ rounds, verdict, winnerId }`). |
 | `spar_arena`     | _(none)_                   | Launches the interactive Spar Arena UI (MCP App).        |
 
 ## Resources exposed
@@ -111,10 +111,12 @@ HTTP server (express + StreamableHTTPServerTransport) on :3001/mcp
 server.ts          # HTTP entry: express + cors + StreamableHTTPServerTransport on :3001/mcp
 vite.config.ts     # viteSingleFile(), input mcp-app.html → dist/mcp-app.html
 mcp-app.html       # UI entry: dropdowns, arena, styles
-src/
+src/               # one file per MCP primitive:
+  tools.ts         #   Tools — list_factions, get_faction, spar (text + structuredContent)
+  resources.ts     #   Resources — kungfu://jianghu/roster + kungfu://factions/{id} (markdown)
+  app.ts           #   App — spar_arena tool + ui://spar-arena/app.html resource
   mcp-app.ts       # UI logic: App class, populate dropdowns, spar, animate rounds, dossier
-  registry.ts      # registerAll(server, html): tools + data resources + app tool/resource
-  resources.ts     # kungfu://jianghu/roster + kungfu://factions/{id} (markdown)
+  format.ts        # shared markdown formatting (used by tools, resources, and the UI)
   data.ts          # KungfuFaction[] dataset (the heart of the humor)
 ```
 
@@ -130,5 +132,7 @@ src/
 ## Notes
 
 - This is a demo. All factions, fun facts, and spar outcomes are fabricated for entertainment.
-- Resource content is English-only (markdown). The dataset in `data.ts` is the source of truth; any non-ASCII is stripped at resource-render time.
+- Resource content is English-only markdown. The dataset in `data.ts` is the source of truth.
+- `list_factions` and `spar` return **both** humorous text (for the LLM) and `structuredContent` (for the app UI) — one tool result, two consumers. The UI never parses prose.
+- Tools and resources render the same markdown via `src/format.ts`; the primitives differ only in who decides to fetch the content.
 - The server is HTTP-only (stdio was dropped because Apps require HTTP).

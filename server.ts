@@ -5,7 +5,9 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { registerAll } from "./src/registry.js";
+import { registerTools } from "./src/tools.js";
+import { registerDataResources } from "./src/resources.js";
+import { registerApp } from "./src/app.js";
 
 const PORT = 3001;
 const distHtmlPath = path.resolve(process.cwd(), "dist", "mcp-app.html");
@@ -54,32 +56,35 @@ app.post("/mcp", async (req, res) => {
     sessionIdGenerator: () => newSessionId,
   });
   const server = new McpServer({ name: "kungfu-mcp", version: "1.0.0" });
-  registerAll(server, bundledHtml);
+  registerTools(server);
+  registerDataResources(server);
+  registerApp(server, bundledHtml);
   sessions.set(newSessionId, { server, transport });
   await server.connect(transport);
   await transport.handleRequest(req, res, req.body);
 });
 
-app.get("/mcp", async (req, res) => {
-  const sessionId = req.header("mcp-session-id") as string | undefined;
+function requireSession(req: express.Request, res: express.Response): Session | undefined {
+  const sessionId = req.header("mcp-session-id");
   const session = sessionId ? sessions.get(sessionId) : undefined;
   if (!session) {
-    res.status(400).json({ error: "Invalid or missing session id for GET (SSE)." });
-    return;
+    res.status(400).json({ error: `Invalid or missing session id for ${req.method}.` });
   }
+  return session;
+}
+
+app.get("/mcp", async (req, res) => {
+  const session = requireSession(req, res);
+  if (!session) return;
   await session.transport.handleRequest(req, res);
 });
 
 app.delete("/mcp", async (req, res) => {
-  const sessionId = req.header("mcp-session-id") as string | undefined;
-  const session = sessionId ? sessions.get(sessionId) : undefined;
-  if (!session) {
-    res.status(400).json({ error: "Invalid or missing session id for DELETE." });
-    return;
-  }
+  const session = requireSession(req, res);
+  if (!session) return;
   await session.transport.handleRequest(req, res);
   await session.server.close();
-  sessions.delete(sessionId!);
+  sessions.delete(req.header("mcp-session-id")!);
 });
 
 app.listen(PORT, () => {
