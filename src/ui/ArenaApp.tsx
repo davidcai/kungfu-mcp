@@ -12,7 +12,7 @@ export function ArenaApp() {
 
   const [factions, setFactions] = useState<Faction[]>([]);
   const [status, setStatus] = useState<{ message: string; isError: boolean }>({
-    message: "Connecting to the jianghu…",
+    message: "Connecting to the kung fu world…",
     isError: false,
   });
   const [selA, setSelA] = useState("");
@@ -110,7 +110,7 @@ export function ArenaApp() {
   return (
     <div id="app">
       <header>
-        <h1>⚔️ Jianghu Spar Arena</h1>
+        <h1>⚔️ Kung Fu Spar Arena</h1>
       </header>
       <div className={"status" + (status.isError ? " err" : "")}>{status.message}</div>
       {ready && (

@@ -34,7 +34,7 @@ HTTP server (express + StreamableHTTPServerTransport) on :3001/mcp
 │   ├── spar                 # existing, unchanged (text narration)
 │   └── spar_arena  [NEW]    # app tool: _meta.ui.resourceUri → triggers UI render
 ├── Data resources (application-driven context)
-│   ├── kungfu://jianghu/roster      [NEW]  static, markdown
+│   ├── kungfu://kungfu/roster      [NEW]  static, markdown
 │   └── kungfu://factions/{id}       [NEW]  template, markdown, list+complete callbacks
 └── UI resource (the app itself)
     └── ui://spar-arena/app.html     [NEW]  bundled HTML, served from dist/
@@ -46,10 +46,10 @@ MCP Apps require HTTP transport — the host fetches the `ui://` resource and re
 
 ---
 
-## Spar Arena UI (`mcp-app.html` + `src/web/`)
+## Spar Arena UI (`mcp-app.html` + `src/ui/`)
 
 **Layout:**
-- Header: "⚔️ Jianghu Spar Arena"
+- Header: "⚔️ Kung Fu Spar Arena"
 - Two faction dropdowns (populated via `app.callServerTool("list_factions")` on load), each showing name + color-coded threat level
 - "Begin the Spar" button → calls `app.callServerTool("spar", { faction_a, faction_b })`
 - Results area: two faction cards facing off (emoji emblems, threat bars), round cards that **fade-in one by one**, verdict banner with winner highlighted + catchphrase
@@ -66,9 +66,9 @@ MCP Apps require HTTP transport — the host fetches the `ui://` resource and re
 | `server.ts` | **NEW** | HTTP entry: express + cors + StreamableHTTPServerTransport on :3001/mcp |
 | `vite.config.ts` | **NEW** | `viteSingleFile()` plugin, input `mcp-app.html` → `dist/mcp-app.html` |
 | `mcp-app.html` | **NEW** | UI entry: dropdowns, arena, styles |
-| `src/web/` | **NEW** | React UI: `useApp` hook, populate dropdowns, call `spar`/`get_faction`, animate rounds (was `src/mcp-app.ts`, migrated per `react-migration-v2.md`) |
+| `src/ui/` | **NEW** | React UI: `useApp` hook, populate dropdowns, call `spar`/`get_faction`, animate rounds (was `src/mcp-app.ts`, migrated per `react-migration-v2.md`) |
 | `src/registry.ts` | **NEW** | `registerAll(server)`: all tools + data resources + app tool/resource |
-| `src/resources.ts` | **NEW** | `kungfu://jianghu/roster` + `kungfu://factions/{id}` (markdown, English-only) |
+| `src/resources.ts` | **NEW** | `kungfu://kungfu/roster` + `kungfu://factions/{id}` (markdown, English-only) |
 | `src/data.ts` | unchanged | Source of truth (keep Chinese here; resources strip it) |
 | `src/index.ts` | **DELETE** | stdio entry, no longer needed (HTTP only) |
 | `package.json` | edit | +ext-apps, +express, +cors; dev: +vite, +vite-plugin-singlefile, +tsx; new scripts |
@@ -86,7 +86,7 @@ const resourceUri = "ui://spar-arena/app.html";
 
 // App tool: model calls this → host renders the UI → UI calls spar/get_faction back
 registerAppTool(server, "spar_arena", {
-  title: "Jianghu Spar Arena",
+  title: "Kung Fu Spar Arena",
   description: "Launch the interactive spar arena. Pick two factions and watch them duel.",
   inputSchema: {},
   _meta: { ui: { resourceUri } },
@@ -100,7 +100,7 @@ registerAppResource(server, resourceUri, resourceUri,
 
 ## Data resources
 
-- `kungfu://jianghu/roster` — static, full roster as markdown
+- `kungfu://kungfu/roster` — static, full roster as markdown
 - `kungfu://factions/{id}` — template with `list` + `complete` callbacks, faction profile as markdown
 - Content is English-only (Chinese stripped from `data.ts` content at render time; `data.ts` itself unchanged)
 

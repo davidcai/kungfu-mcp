@@ -2,15 +2,15 @@ import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mc
 import { KUNGFU_FACTIONS, findFaction } from "./data.js";
 import { rosterMarkdown, profileMarkdown } from "./format.js";
 
-const ROSTER_URI = "kungfu://jianghu/roster";
+const ROSTER_URI = "kungfu://kungfu/roster";
 const MARKDOWN_MIME = "text/markdown";
 
 export function registerDataResources(server: McpServer): void {
   // Static resource: full roster as markdown.
   server.registerResource(
-    "jianghu-roster",
+    "kungfu-roster",
     ROSTER_URI,
-    { description: "The full jianghu faction roster, as markdown.", mimeType: MARKDOWN_MIME },
+    { description: "The full kung fu faction roster, as markdown.", mimeType: MARKDOWN_MIME },
     async () => ({
       contents: [{ uri: ROSTER_URI, mimeType: MARKDOWN_MIME, text: rosterMarkdown() }],
     }),
@@ -44,7 +44,7 @@ export function registerDataResources(server: McpServer): void {
             {
               uri: uri.toString(),
               mimeType: MARKDOWN_MIME,
-              text: `# Not found\n\nNo faction with id "${id}" was found in the jianghu.`,
+              text: `# Not found\n\nNo faction with id "${id}" was found in the kung fu world.`,
             },
           ],
         };

@@ -4,7 +4,7 @@
   "description": "A humorous MCP server that catalogs major kungfu factions and narrates sparring matches. For presentation demos.",
   "type": "module",
   "scripts": {
-    "build": "tsc && tsc -p tsconfig.web.json && vite build",
+    "build": "tsc && tsc -p tsconfig.ui.json && vite build",
     "start": "node build/server.js",
     "dev": "tsx server.ts",
     "inspect": "npx @modelcontextprotocol/inspector"

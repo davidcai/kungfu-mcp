@@ -15,7 +15,7 @@ export function registerApp(server: McpServer, bundledHtml: string): void {
     server,
     "spar_arena",
     {
-      title: "Jianghu Spar Arena",
+      title: "Kung Fu Spar Arena",
       description:
         "Launch the interactive spar arena. Pick two factions and watch them duel. Renders an inline UI; the UI calls list_factions, spar, and get_faction back on this server.",
       inputSchema: {},

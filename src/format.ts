@@ -15,13 +15,13 @@ export function rosterMarkdown(): string {
     (f) => `- **${f.id}** — ${f.name} [threat ${f.threatLevel}/10] — "${f.catchphrase}"`,
   ).join("\n");
   return [
-    "# The Jianghu Roster",
+    "# The Kung Fu Roster",
     "",
     `${KUNGFU_FACTIONS.length} factions are currently accepting (and rejecting) disciples.`,
     "",
     lines,
     "",
-    "_Disclaimer: The jianghu accepts no responsibility for bruised egos, poisoned handshakes, or tragic backstories._",
+    "_Disclaimer: The kung fu world accepts no responsibility for bruised egos, poisoned handshakes, or tragic backstories._",
   ].join("\n");
 }
 

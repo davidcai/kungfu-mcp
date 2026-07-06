@@ -77,7 +77,7 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     name: "Beggar's Sect",
     faction: "Orthodox, surprisingly",
     origin:
-      "Everywhere there are hungry people, which is everywhere. The largest martial organization in the jianghu and the only one with an all-you-can-eat buffet membership.",
+      "Everywhere there are hungry people, which is everywhere. The largest martial organization in the kung fu world and the only one with an all-you-can-eat buffet membership.",
     philosophy:
       "Solidarity of the downtrodden. Also: hitting people with a stick. The stick is key.",
     signatureTechniques: [

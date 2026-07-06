@@ -10,7 +10,7 @@ export function registerTools(server: McpServer): void {
     "list_factions",
     {
       description:
-        "List all major kungfu factions known to the jianghu. Returns a compact roster with each faction's id, name, threat level, and catchphrase. Use get_faction(id) for the full profile.",
+        "List all major kungfu factions known to the kung fu world. Returns a compact roster with each faction's id, name, threat level, and catchphrase. Use get_faction(id) for the full profile.",
       inputSchema: {},
       outputSchema: {
         factions: z.array(
@@ -57,7 +57,7 @@ export function registerTools(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `No faction with id "${id}" was found in the jianghu. It may have been wiped out in a tragic backstory, or you made it up. Known ids: ${known}.`,
+              text: `No faction with id "${id}" was found in the kung fu world. It may have been wiped out in a tragic backstory, or you made it up. Known ids: ${known}.`,
             },
           ],
           isError: true,
@@ -94,7 +94,7 @@ export function registerTools(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Cannot schedule a spar: faction(s) ${missing} not found in the jianghu. One cannot fight what does not exist. Known ids: ${known}.`,
+              text: `Cannot schedule a spar: faction(s) ${missing} not found in the kung fu world. One cannot fight what does not exist. Known ids: ${known}.`,
             },
           ],
           isError: true,
@@ -102,7 +102,7 @@ export function registerTools(server: McpServer): void {
       }
 
       if (a.id === b.id) {
-        const verdict = `${a.name} cannot spar ${a.name}. That is called 'practice' and the jianghu frowns on it being dramatized.`;
+        const verdict = `${a.name} cannot spar ${a.name}. That is called 'practice' and the kung fu world frowns on it being dramatized.`;
         return {
           content: [{ type: "text", text: verdict }],
           structuredContent: { rounds: [], verdict, winnerId: null } satisfies SparOutcome,
@@ -135,7 +135,7 @@ function runSpar(a: KungfuFaction, b: KungfuFaction): SparOutcome {
     ? `${winner.name} wins on threat level (${winner.threatLevel} vs ${
         winner.id === a.id ? b.threatLevel : a.threatLevel
       }). As ${winner.name} says: "${winner.catchphrase}"`
-    : `A draw. Both factions retreat to write poetry about the affair. The jianghu declares it "a classic."`;
+    : `A draw. Both factions retreat to write poetry about the affair. The kung fu world declares it "a classic."`;
 
   return { rounds, verdict, winnerId: winner?.id ?? null };
 }
