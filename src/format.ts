@@ -1,18 +1,11 @@
-import { KUNGFU_FACTIONS, factionThreat, type KungfuFaction } from "./data.js";
+import { KUNGFU_FACTIONS, type KungfuFaction } from "./data.js";
 
 // Shared formatting for tools and resources: same data, same markdown —
 // the primitives differ only in who decides to fetch it.
 
-export function threatLabel(level: number): string {
-  if (level >= 9) return "avoid eye contact";
-  if (level >= 7) return "do not taunt";
-  if (level >= 5) return "probably fine";
-  return "a gentle breeze";
-}
-
 export function rosterMarkdown(): string {
   const lines = KUNGFU_FACTIONS.map(
-    (f) => `- **${f.id}** — ${f.name} [threat ${factionThreat(f)}/10] — "${f.catchphrase}"`,
+    (f) => `- **${f.id}** — ${f.name} — "${f.catchphrase}"`,
   ).join("\n");
   return [
     "# The Kung Fu Roster",
@@ -30,7 +23,6 @@ export function profileMarkdown(f: KungfuFaction): string {
     `# ${f.name}`,
     "",
     `- **Faction:** ${f.faction}`,
-    `- **Threat Level:** ${factionThreat(f)}/10 (${threatLabel(factionThreat(f))}) — the faction is only as scary as its scariest technique`,
     `- **Origin:** ${f.origin}`,
     `- **Philosophy:** ${f.philosophy}`,
     "",

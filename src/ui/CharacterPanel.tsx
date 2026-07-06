@@ -20,7 +20,7 @@ export function CharacterPanel({
       <select value={value} onChange={(e) => onChange(e.target.value)}>
         {factions.map((f) => (
           <option key={f.id} value={f.id}>
-            {f.name} — threat {f.threat}/10
+            {f.name}
           </option>
         ))}
       </select>

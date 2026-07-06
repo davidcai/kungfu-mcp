@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { KUNGFU_FACTIONS, factionThreat, findFaction, type KungfuFaction } from "./data.js";
+import { KUNGFU_FACTIONS, findFaction, type KungfuFaction } from "./data.js";
 import { rosterMarkdown, profileMarkdown } from "./format.js";
 
 type SparOutcome = { rounds: string[]; verdict: string; winnerId: string | null };
@@ -10,14 +10,13 @@ export function registerTools(server: McpServer): void {
     "list_factions",
     {
       description:
-        "List all major kungfu factions known to the kung fu world. Returns a compact roster with each faction's id, name, threat level, and catchphrase. Use get_faction(id) for the full profile.",
+        "List all major kungfu factions known to the kung fu world. Returns a compact roster with each faction's id, name, and catchphrase. Use get_faction(id) for the full profile.",
       inputSchema: {},
       outputSchema: {
         factions: z.array(
           z.object({
             id: z.string(),
             name: z.string(),
-            threat: z.number(),
             catchphrase: z.string(),
           }),
         ),
@@ -29,7 +28,6 @@ export function registerTools(server: McpServer): void {
         factions: KUNGFU_FACTIONS.map((f) => ({
           id: f.id,
           name: f.name,
-          threat: factionThreat(f),
           catchphrase: f.catchphrase,
         })),
       },
@@ -40,7 +38,7 @@ export function registerTools(server: McpServer): void {
     "get_faction",
     {
       description:
-        "Retrieve the full profile for a single kungfu faction by id. Includes origin, philosophy, signature techniques, famous practitioners, a fun fact, threat level, and a catchphrase. If you don't know the id, call list_factions first.",
+        "Retrieve the full profile for a single kungfu faction by id. Includes origin, philosophy, signature techniques (each with its own threat level), famous practitioners, a fun fact, and a catchphrase. If you don't know the id, call list_factions first.",
       inputSchema: {
         id: z
           .string()
@@ -153,8 +151,8 @@ function runSpar(a: KungfuFaction, b: KungfuFaction, nameA: string, nameB: strin
     scoreA += ta.threat;
     scoreB += tb.threat;
     const clash = pick(ROUND_TEMPLATES)(
-      `${nameA} strikes with ${ta.name} (threat ${ta.threat})`,
-      `${nameB} answers with ${tb.name} (threat ${tb.threat})`,
+      `${nameA} strikes with **${ta.name}** (threat ${ta.threat})`,
+      `${nameB} answers with **${tb.name}** (threat ${tb.threat})`,
     );
     const edge =
       ta.threat > tb.threat

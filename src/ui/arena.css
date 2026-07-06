@@ -1,28 +1,69 @@
+/* MongoDB-derived Matrix palette. Light is the default scheme; dark
+   overrides via data-theme on <html>. Light = stark white documentation
+   surface with green-dark accents; dark = deep teal hero band with the
+   bright brand green. Text-bearing colors (ink, muted, accent, danger,
+   good) hit WCAG AA (≥4.5:1) against bg and panels. The bright green is
+   reserved for the CTA pill and glows — never body text on light. */
 :root {
+  color-scheme: light;
+  --bg: #f9fbfa;
+  --panel: #ffffff;
+  --panel-2: #e3fcf7;
+  --ink: #001e2b;
+  --muted: #5c6c75;
+  --accent: #00684a;
+  --cta: #00ed64;
+  --cta-contrast: #001e2b;
+  --danger: #970606;
+  --good: #00684a;
+  --border: #e8edeb;
+  --glow: rgba(0, 104, 74, 0.25);
+}
+:root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0f0d0a;
-  --panel: #1a1612;
-  --panel-2: #241e18;
-  --ink: #f4e9d6;
-  --muted: #9a8a72;
-  --accent: #d4a24c;
-  --danger: #c8453a;
-  --good: #6fae5e;
-  --border: #3a2f24;
+  --bg: #001e2b;
+  --panel: #112733;
+  --panel-2: #1c2d38;
+  --ink: #f9fbfa;
+  --muted: #98a6ad;
+  --accent: #00ed64;
+  --cta: #00ed64;
+  --cta-contrast: #001e2b;
+  --danger: #ff6960;
+  --good: #71f6ba;
+  --border: #3d4f58;
+  --glow: rgba(0, 237, 100, 0.3);
 }
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "Euclid Circular A", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--ink);
   padding: 1.25rem;
+}
+header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 h1 {
   margin: 0 0 1rem;
   font-size: 1.4rem;
   letter-spacing: 0.02em;
 }
+.theme-toggle {
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
 .pickers {
   display: flex;
   gap: 0.75rem;
@@ -67,14 +108,16 @@ select {
 }
 .vs {
   color: var(--accent);
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 1.3rem;
 }
 #spar-btn {
-  margin: 1rem 0;
-  background: var(--accent);
-  color: #1a1208;
+  display: block;
+  margin: 1rem auto;
+  background: var(--cta);
+  color: var(--cta-contrast);
   border: none;
-  border-radius: 8px;
+  border-radius: 9999px;
   padding: 0.7rem 1.4rem;
   font-size: 1rem;
   font-weight: 700;
@@ -99,37 +142,14 @@ select {
   text-align: center;
   transition: box-shadow 0.4s, border-color 0.4s;
 }
-.card.winner {
-  border-color: var(--good);
-  box-shadow: 0 0 0 2px var(--good), 0 0 24px rgba(111, 174, 94, 0.35);
-}
 .card.loser { opacity: 0.62; }
 .emblem { font-size: 2.6rem; line-height: 1; }
 .card h3 { margin: 0.4rem 0 0.2rem; font-size: 1.05rem; }
-.card .sub { color: var(--muted); font-size: 0.78rem; }
-.threat-bar {
-  height: 8px;
-  background: var(--panel-2);
-  border-radius: 4px;
-  margin: 0.6rem 0 0.2rem;
-  overflow: hidden;
-}
-.threat-bar > span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--good), var(--accent), var(--danger));
-  border-radius: 4px;
-}
 .card .phrase {
   font-style: italic;
   color: var(--ink);
   font-size: 0.85rem;
   margin-top: 0.4rem;
-}
-.center-vs {
-  font-size: 1.3rem;
-  color: var(--accent);
-  font-weight: 800;
 }
 
 .rounds { margin: 0.5rem 0; }
@@ -140,19 +160,44 @@ select {
   padding: 0.7rem 0.9rem;
   margin-bottom: 0.5rem;
   opacity: 0;
-  transform: translateY(8px);
-  animation: fadeIn 0.5s ease forwards;
+  transform: translateY(28px) scale(0.96);
+  animation: roundSlam 0.55s cubic-bezier(0.22, 1.1, 0.36, 1) forwards;
 }
 .round .rlabel {
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 700;
 }
-.round .rtext { font-size: 0.92rem; margin-top: 0.15rem; }
-@keyframes fadeIn {
-  to { opacity: 1; transform: translateY(0); }
+.round .rtext {
+  font-size: 1.1rem;
+  line-height: 1.55;
+  margin-top: 0.25rem;
+}
+.rtext .tech {
+  color: var(--accent);
+  font-weight: 700;
+  background: var(--panel-2);
+  border-radius: 4px;
+  padding: 0 0.3em;
+}
+@keyframes roundSlam {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+    box-shadow: none;
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 6px 20px var(--glow);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: none;
+  }
 }
 
 .verdict {
@@ -162,12 +207,36 @@ select {
   padding: 1rem;
   text-align: center;
   margin: 1rem 0;
+  font-size: 1.2rem;
   opacity: 0;
-  animation: fadeIn 0.5s ease 0.2s forwards;
+  transform: scale(0.85) translateY(16px);
+  animation: verdictReveal 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+@keyframes verdictReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(16px);
+    box-shadow: none;
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 0 36px var(--glow);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    box-shadow: 0 0 14px var(--glow);
+  }
 }
 .verdict.draw { border-color: var(--muted); }
 .verdict .winner-name { color: var(--good); font-weight: 800; }
-.verdict .vtext { color: var(--ink); margin-top: 0.3rem; font-size: 0.92rem; }
+.verdict .vtext {
+  color: var(--ink);
+  margin-top: 0.4rem;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
 
 .profile {
   background: var(--panel);
@@ -184,7 +253,7 @@ select {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 9999px;
   padding: 0.3rem 0.6rem;
   font-size: 0.78rem;
   cursor: pointer;

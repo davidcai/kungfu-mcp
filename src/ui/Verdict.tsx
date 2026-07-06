@@ -1,3 +1,4 @@
+import { ROUND_DELAY_BASE, ROUND_DELAY_STEP, VERDICT_EXTRA_DELAY } from "./RoundList";
 import type { SparOutcome } from "./types";
 
 export function Verdict({
@@ -10,7 +11,9 @@ export function Verdict({
   return (
     <div
       className={`verdict${winnerName ? "" : " draw"}`}
-      style={{ animationDelay: `${0.3 + outcome.rounds.length * 0.7 + 0.2}s` }}
+      style={{
+        animationDelay: `${ROUND_DELAY_BASE + outcome.rounds.length * ROUND_DELAY_STEP + VERDICT_EXTRA_DELAY}s`,
+      }}
     >
       <div>
         {winnerName ? (

@@ -16,8 +16,7 @@ The server runs on `StreamableHTTPServerTransport` over Express (Apps require HT
 
 ```bash
 npm install
-npm run build   # compiles the server + bundles the UI → dist/mcp-app.html
-npm start       # → http://localhost:3001/mcp
+npm start       # builds (server + UI), then serves → http://localhost:3001/mcp
 ```
 
 The server logs `kungfu-mcp listening on http://localhost:3001/mcp`.
@@ -33,7 +32,7 @@ npm run dev     # tsx server.ts — runs the server directly
 | Script            | What it does                                                                 |
 | ----------------- | --------------------------------------------------------------------------- |
 | `npm run build`   | `tsc` (server → `build/`) + `tsc -p tsconfig.ui.json` (UI typecheck) + `vite build` (UI → `dist/mcp-app.html`) |
-| `npm start`       | `node build/server.js` → http://localhost:3001/mcp                           |
+| `npm start`       | `npm run build && node build/server.js` → http://localhost:3001/mcp          |
 | `npm run dev`     | `tsx server.ts` (run the server without building)                            |
 | `npm run inspect` | Launch the MCP Inspector                                                     |
 

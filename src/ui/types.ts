@@ -1,4 +1,4 @@
-export type Faction = { id: string; name: string; threat: number; catchphrase: string };
+export type Faction = { id: string; name: string; catchphrase: string };
 export type SparOutcome = { rounds: string[]; verdict: string; winnerId: string | null };
 
 export type ProfileState =

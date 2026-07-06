@@ -15,11 +15,6 @@ export interface KungfuFaction {
   catchphrase: string;
 }
 
-// A faction is only as scary as its scariest move.
-export function factionThreat(f: KungfuFaction): number {
-  return Math.max(...f.signatureTechniques.map((t) => t.threat));
-}
-
 export const KUNGFU_FACTIONS: KungfuFaction[] = [
   {
     id: "shaolin",
