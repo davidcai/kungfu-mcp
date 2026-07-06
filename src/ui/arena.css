@@ -26,20 +26,36 @@ h1 {
 .pickers {
   display: flex;
   gap: 0.75rem;
-  align-items: end;
+  align-items: center;
   flex-wrap: wrap;
 }
-.pickers label {
+.char-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.78rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
   flex: 1;
   min-width: 180px;
 }
+.char-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.char-name {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.char-panel select { width: 100%; }
 select {
   appearance: none;
   background: var(--panel);
@@ -52,7 +68,6 @@ select {
 .vs {
   color: var(--accent);
   font-weight: 700;
-  padding-bottom: 0.55rem;
 }
 #spar-btn {
   margin: 1rem 0;
