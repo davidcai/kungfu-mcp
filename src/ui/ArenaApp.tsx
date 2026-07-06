@@ -27,7 +27,12 @@ export function ArenaApp() {
   const [ready, setReady] = useState(false);
   const [result, setResult] = useState<SparResult | null>(null);
   const [profile, setProfile] = useState<ProfileState | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("light");
   const sparIdRef = useRef(0);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
 
   useEffect(() => {
     if (error) {
@@ -124,6 +129,13 @@ export function ArenaApp() {
     <div id="app">
       <header>
         <h1>⚔️ Kung Fu Spar Arena</h1>
+        <button
+          className="theme-toggle"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        >
+          {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+        </button>
       </header>
       <div className={"status" + (status.isError ? " err" : "")}>{status.message}</div>
       {ready && (
@@ -135,7 +147,7 @@ export function ArenaApp() {
             value={selA}
             onChange={setSelA}
           />
-          <span className="vs">vs</span>
+          <span className="vs">VS</span>
           <CharacterPanel
             name={CHAMPION_B}
             image={morpheusImg}

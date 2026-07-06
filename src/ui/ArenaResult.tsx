@@ -26,7 +26,7 @@ export function ArenaResult({
     <>
       <div className="arena">
         <FactionCard faction={a} extraClass={cardClass(a)} />
-        <div className="center-vs">VS</div>
+        <div className="vs">VS</div>
         <FactionCard faction={b} extraClass={cardClass(b)} />
       </div>
       <RoundList rounds={outcome.rounds} />
