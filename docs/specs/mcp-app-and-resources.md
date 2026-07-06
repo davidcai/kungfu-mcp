@@ -46,7 +46,7 @@ MCP Apps require HTTP transport — the host fetches the `ui://` resource and re
 
 ---
 
-## Spar Arena UI (`mcp-app.html` + `src/mcp-app.ts`)
+## Spar Arena UI (`mcp-app.html` + `src/web/`)
 
 **Layout:**
 - Header: "⚔️ Jianghu Spar Arena"
@@ -55,7 +55,7 @@ MCP Apps require HTTP transport — the host fetches the `ui://` resource and re
 - Results area: two faction cards facing off (emoji emblems, threat bars), round cards that **fade-in one by one**, verdict banner with winner highlighted + catchphrase
 - "View Profile" buttons → call `get_faction`, render inline
 
-**Tech:** vanilla TS + CSS (no framework — keeps the demo dependency-light and easy to read). Uses `App` from `@modelcontextprotocol/ext-apps` for `connect()`, `ontoolresult`, `callServerTool`.
+**Tech:** React 19 + TSX components (see `docs/specs/react-migration-v2.md`). Uses the official `useApp` hook from `@modelcontextprotocol/ext-apps/react` for connection + `callServerTool`.
 
 ---
 
@@ -66,7 +66,7 @@ MCP Apps require HTTP transport — the host fetches the `ui://` resource and re
 | `server.ts` | **NEW** | HTTP entry: express + cors + StreamableHTTPServerTransport on :3001/mcp |
 | `vite.config.ts` | **NEW** | `viteSingleFile()` plugin, input `mcp-app.html` → `dist/mcp-app.html` |
 | `mcp-app.html` | **NEW** | UI entry: dropdowns, arena, styles |
-| `src/mcp-app.ts` | **NEW** | UI logic: `App` class, populate dropdowns, call `spar`/`get_faction`, animate rounds |
+| `src/web/` | **NEW** | React UI: `useApp` hook, populate dropdowns, call `spar`/`get_faction`, animate rounds (was `src/mcp-app.ts`, migrated per `react-migration-v2.md`) |
 | `src/registry.ts` | **NEW** | `registerAll(server)`: all tools + data resources + app tool/resource |
 | `src/resources.ts` | **NEW** | `kungfu://jianghu/roster` + `kungfu://factions/{id}` (markdown, English-only) |
 | `src/data.ts` | unchanged | Source of truth (keep Chinese here; resources strip it) |
@@ -189,7 +189,7 @@ Requires `cloudflared` tunnel + a paid Claude plan (Pro/Max/Team). Documented in
 | Transport | HTTP only | Apps require HTTP; drop stdio for simplicity |
 | Resource content format | Markdown | Renders nicely in clients; distinct from plain-text tool output; showcases `mimeType` |
 | Chinese in resources | Strip | Consistent with README's English-only decision for user-facing surfaces |
-| Framework | Vanilla TS + CSS | Dependency-light, easy to read for a demo |
+| Framework | React 19 (official ext-apps React support) | Migrated per `react-migration-v2.md`; `useApp` hook replaces manual `App` wiring |
 | `data.ts` Chinese | Keep unchanged | Source of truth; stripping happens at resource render time |
 
 ---

@@ -10,5 +10,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["server.ts", "src/**/*.ts"],
-  "exclude": ["node_modules", "src/mcp-app.ts", "vite.config.ts"]
+  "exclude": ["node_modules", "src/web", "vite.config.ts"]
 }

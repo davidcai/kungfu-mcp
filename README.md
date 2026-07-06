@@ -44,7 +44,7 @@ Apps require HTTP transport, so the server runs on `StreamableHTTPServerTranspor
 
 ```bash
 npm install
-npm run build   # tsc (server) + vite build (UI → dist/mcp-app.html)
+npm run build   # tsc (server) + tsc -p tsconfig.web.json (UI typecheck) + vite build (UI → dist/mcp-app.html)
 npm start       # → http://localhost:3001/mcp
 ```
 
@@ -109,13 +109,17 @@ HTTP server (express + StreamableHTTPServerTransport) on :3001/mcp
 
 ```
 server.ts          # HTTP entry: express + cors + StreamableHTTPServerTransport on :3001/mcp
-vite.config.ts     # viteSingleFile(), input mcp-app.html → dist/mcp-app.html
-mcp-app.html       # UI entry: dropdowns, arena, styles
+vite.config.ts     # react() + viteSingleFile(), input mcp-app.html → dist/mcp-app.html
+mcp-app.html       # UI shell: #root div + src/web/main.tsx script tag
 src/               # one file per MCP primitive:
   tools.ts         #   Tools — list_factions, get_faction, spar (text + structuredContent)
   resources.ts     #   Resources — kungfu://jianghu/roster + kungfu://factions/{id} (markdown)
   app.ts           #   App — spar_arena tool + ui://spar-arena/app.html resource
-  mcp-app.ts       # UI logic: App class, populate dropdowns, spar, animate rounds, profile
+  web/             # React UI (useApp hook from @modelcontextprotocol/ext-apps/react)
+    main.tsx       #   entry: createRoot + arena.css import
+    ArenaApp.tsx   #   state owner: factions, spar, profile; renders pickers/arena/profile
+    ArenaResult.tsx, FactionCard.tsx, RoundList.tsx, Verdict.tsx, ProfilePanel.tsx
+    types.ts, emblems.ts, arena.css
   format.ts        # shared markdown formatting (used by tools, resources, and the UI)
   data.ts          # KungfuFaction[] dataset (the heart of the humor)
 ```
@@ -124,7 +128,7 @@ src/               # one file per MCP primitive:
 
 | Script           | What it does                                              |
 | ---------------- | -------------------------------------------------------- |
-| `npm run build`  | `tsc` (server → `build/`) + `vite build` (UI → `dist/mcp-app.html`) |
+| `npm run build`  | `tsc` (server → `build/`) + `tsc -p tsconfig.web.json` (UI typecheck) + `vite build` (UI → `dist/mcp-app.html`) |
 | `npm start`      | `node build/server.js` → http://localhost:3001/mcp       |
 | `npm run dev`    | `tsx server.ts` (run server without building)            |
 | `npm run inspect`| Launch the MCP Inspector (point it at the HTTP URL)      |
