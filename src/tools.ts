@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { KUNGFU_FACTIONS, findFaction, type KungfuFaction } from "./data.js";
+import { KUNGFU_FACTIONS, factionThreat, findFaction, type KungfuFaction } from "./data.js";
 import { rosterMarkdown, profileMarkdown } from "./format.js";
 
 type SparOutcome = { rounds: string[]; verdict: string; winnerId: string | null };
@@ -29,7 +29,7 @@ export function registerTools(server: McpServer): void {
         factions: KUNGFU_FACTIONS.map((f) => ({
           id: f.id,
           name: f.name,
-          threat: f.threatLevel,
+          threat: factionThreat(f),
           catchphrase: f.catchphrase,
         })),
       },
@@ -76,6 +76,18 @@ export function registerTools(server: McpServer): void {
       inputSchema: {
         faction_a: z.string().describe("First faction id (e.g. 'shaolin')."),
         faction_b: z.string().describe("Second faction id (e.g. 'wudang')."),
+        champion_a: z
+          .string()
+          .optional()
+          .describe(
+            "Display name of the fighter championing the first faction (e.g. 'Neo'). Defaults to the faction name.",
+          ),
+        champion_b: z
+          .string()
+          .optional()
+          .describe(
+            "Display name of the fighter championing the second faction (e.g. 'Morpheus'). Defaults to the faction name.",
+          ),
       },
       outputSchema: {
         rounds: z.array(z.string()),
@@ -83,7 +95,7 @@ export function registerTools(server: McpServer): void {
         winnerId: z.string().nullable(),
       },
     },
-    async ({ faction_a, faction_b }) => {
+    async ({ faction_a, faction_b, champion_a, champion_b }) => {
       const a = findFaction(faction_a);
       const b = findFaction(faction_b);
 
@@ -109,40 +121,68 @@ export function registerTools(server: McpServer): void {
         };
       }
 
-      const outcome = runSpar(a, b);
+      const nameA = champion_a ?? a.name;
+      const nameB = champion_b ?? b.name;
+      const outcome = runSpar(a, b, nameA, nameB);
       return {
-        content: [{ type: "text", text: sparNarration(a, b, outcome) }],
+        content: [{ type: "text", text: sparNarration(a, b, nameA, nameB, outcome) }],
         structuredContent: outcome,
       };
     },
   );
 }
 
-function runSpar(a: KungfuFaction, b: KungfuFaction): SparOutcome {
-  const winner = a.threatLevel > b.threatLevel ? a : a.threatLevel < b.threatLevel ? b : null;
+const ROUND_TEMPLATES: ((moveA: string, moveB: string) => string)[] = [
+  (moveA, moveB) => `${moveA}. ${moveB}. The crowd gasps. A chicken flees.`,
+  (moveA, moveB) => `${moveA}. ${moveB}. The referee takes notes, then cover.`,
+  (moveA, moveB) => `${moveA}. ${moveB}. Somewhere, a master sighs and pours tea.`,
+  (moveA, moveB) => `${moveA}. ${moveB}. A nearby poet begins drafting.`,
+  (moveA, moveB) => `${moveA}. ${moveB}. The arena floor files a complaint.`,
+];
 
-  const rounds = [
-    `${a.name} opens with ${a.signatureTechniques[0]}. ${b.name} responds with ${b.signatureTechniques[0]}. The crowd gasps. A chicken flees.`,
-    `${a.name}'s philosophy ("${truncate(a.philosophy)}") meets ${b.name}'s philosophy ("${truncate(
-      b.philosophy,
-    )}"). Neither yields. The referee yields, emotionally.`,
-    `${a.name} deploys ${pick(a.signatureTechniques)}. ${b.name} counters with ${pick(
-      b.signatureTechniques,
-    )}. Somewhere, a master sighs and pours tea.`,
-  ];
+const ROUND_COUNT = 3;
 
+function runSpar(a: KungfuFaction, b: KungfuFaction, nameA: string, nameB: string): SparOutcome {
+  let scoreA = 0;
+  let scoreB = 0;
+
+  const rounds: string[] = [];
+  for (let i = 0; i < ROUND_COUNT; i++) {
+    const ta = pick(a.signatureTechniques);
+    const tb = pick(b.signatureTechniques);
+    scoreA += ta.threat;
+    scoreB += tb.threat;
+    const clash = pick(ROUND_TEMPLATES)(
+      `${nameA} strikes with ${ta.name} (threat ${ta.threat})`,
+      `${nameB} answers with ${tb.name} (threat ${tb.threat})`,
+    );
+    const edge =
+      ta.threat > tb.threat
+        ? ` Round to ${nameA}.`
+        : tb.threat > ta.threat
+          ? ` Round to ${nameB}.`
+          : " The round is a wash.";
+    rounds.push(clash + edge);
+  }
+
+  const winner = scoreA > scoreB ? a : scoreB > scoreA ? b : null;
+  const winnerName = winner ? (winner.id === a.id ? nameA : nameB) : null;
   const verdict = winner
-    ? `${winner.name} wins on threat level (${winner.threatLevel} vs ${
-        winner.id === a.id ? b.threatLevel : a.threatLevel
-      }). As ${winner.name} says: "${winner.catchphrase}"`
-    : `A draw. Both factions retreat to write poetry about the affair. The kung fu world declares it "a classic."`;
+    ? `${winnerName} wins ${Math.max(scoreA, scoreB)} to ${Math.min(scoreA, scoreB)} on the techniques that landed. As ${winner.name} teaches: "${winner.catchphrase}"`
+    : `A draw at ${scoreA} apiece. ${nameA} and ${nameB} retreat to write poetry about the affair. The kung fu world declares it "a classic."`;
 
   return { rounds, verdict, winnerId: winner?.id ?? null };
 }
 
-function sparNarration(a: KungfuFaction, b: KungfuFaction, outcome: SparOutcome): string {
+function sparNarration(
+  a: KungfuFaction,
+  b: KungfuFaction,
+  nameA: string,
+  nameB: string,
+  outcome: SparOutcome,
+): string {
   return [
-    `## Exhibition Spar: ${a.name} vs ${b.name}`,
+    `## Exhibition Spar: ${nameA} (${a.name}) vs ${nameB} (${b.name})`,
     "",
     ...outcome.rounds.map((r, i) => `Round ${i + 1}: ${r}`),
     "",
@@ -150,10 +190,6 @@ function sparNarration(a: KungfuFaction, b: KungfuFaction, outcome: SparOutcome)
     "",
     `_(This narration was produced by a biased bystander. Neither faction endorses the outcome. Both are considering legal action.)_`,
   ].join("\n");
-}
-
-function truncate(s: string, max = 60): string {
-  return s.length <= max ? s : s.slice(0, max - 1) + "…";
 }
 
 function pick<T>(arr: T[]): T {

@@ -5,6 +5,9 @@ import { CharacterPanel } from "./CharacterPanel";
 import { ProfilePanel } from "./ProfilePanel";
 import neoImg from "./assets/neo.jpeg";
 import morpheusImg from "./assets/morpheus.jpeg";
+
+const CHAMPION_A = "Neo";
+const CHAMPION_B = "Morpheus";
 import { textOf, type Faction, type ProfileState, type SparOutcome, type SparResult } from "./types";
 
 export function ArenaApp() {
@@ -78,7 +81,12 @@ export function ArenaApp() {
     try {
       const res = await app.callServerTool({
         name: "spar",
-        arguments: { faction_a: a.id, faction_b: b.id },
+        arguments: {
+          faction_a: a.id,
+          faction_b: b.id,
+          champion_a: CHAMPION_A,
+          champion_b: CHAMPION_B,
+        },
       });
       if (res.isError) {
         setStatus({ message: textOf(res), isError: true });
@@ -88,6 +96,8 @@ export function ArenaApp() {
       setResult({
         a,
         b,
+        championA: CHAMPION_A,
+        championB: CHAMPION_B,
         outcome: res.structuredContent as SparOutcome,
         sparId: sparIdRef.current,
       });
@@ -118,10 +128,16 @@ export function ArenaApp() {
       <div className={"status" + (status.isError ? " err" : "")}>{status.message}</div>
       {ready && (
         <section className="pickers">
-          <CharacterPanel name="Neo" image={neoImg} factions={factions} value={selA} onChange={setSelA} />
+          <CharacterPanel
+            name={CHAMPION_A}
+            image={neoImg}
+            factions={factions}
+            value={selA}
+            onChange={setSelA}
+          />
           <span className="vs">vs</span>
           <CharacterPanel
-            name="Morpheus"
+            name={CHAMPION_B}
             image={morpheusImg}
             factions={factions}
             value={selB}
@@ -140,6 +156,8 @@ export function ArenaApp() {
             key={result.sparId}
             a={result.a}
             b={result.b}
+            championA={result.championA}
+            championB={result.championB}
             outcome={result.outcome}
             onViewProfile={showProfile}
           />

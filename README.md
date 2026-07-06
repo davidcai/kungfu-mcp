@@ -74,7 +74,7 @@ cd /tmp/ext-apps/examples/basic-host && npm install
 SERVERS='["http://localhost:3001/mcp"]' npm start   # → http://localhost:8080
 ```
 
-Open the host, call `spar_arena`, pick two factions, press **Begin the Spar**.
+Open the host, call `spar_arena`, pick a faction for Neo and one for Morpheus, press **Begin the Spar**.
 
 Apps also render in Claude (web/Desktop) via a `cloudflared` tunnel + paid plan — not the primary local-dev path.
 
@@ -88,7 +88,7 @@ Apps also render in Claude (web/Desktop) via a `cloudflared` tunnel + paid plan 
 | --------------- | ------------------------------- | -------------------------------------------------------------------- |
 | `list_factions` | _(none)_                        | Roster markdown + `structuredContent` (`{ factions }`).              |
 | `get_faction`   | `id: string`                    | Full profile for one faction as markdown.                            |
-| `spar`          | `faction_a, faction_b: string`  | Biased narration + `structuredContent` (`{ rounds, verdict, winnerId }`). |
+| `spar`          | `faction_a, faction_b: string`, optional `champion_a, champion_b: string` | Biased narration + `structuredContent` (`{ rounds, verdict, winnerId }`). Each round randomly picks a signature technique per side; the winner has the higher sum of picked techniques' threats. Champion names (e.g. "Neo") replace faction names in the narration. |
 | `spar_arena`    | _(none)_                        | Launches the interactive Spar Arena UI (MCP App).                   |
 
 **Resources**
