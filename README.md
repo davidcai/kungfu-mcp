@@ -2,7 +2,13 @@
 
 A humorous [Model Context Protocol](https://modelcontextprotocol.io/) server, in TypeScript, that catalogs the major factions of the **jianghu** (the martial-arts underworld) and narrates sparring matches between them.
 
-Built for a presentation demo to illustrate the **main building blocks of an MCP server** — tools, schema validation, the stdio transport, and the client/server handshake — without taking itself too seriously.
+This build demonstrates the **three MCP primitives side by side**:
+
+- **Tools** (model-controlled) — `list_factions`, `get_faction`, `spar`, and `spar_arena`.
+- **Resources** (application-driven context) — `kungfu://jianghu/roster` and `kungfu://factions/{id}` dossiers as markdown.
+- **Apps** (interactive UI rendered in chat) — `spar_arena` launches an inline arena built on a `ui://` resource. The UI calls tools back on the server (`list_factions`, `spar`, `get_faction`) and renders animated, round-by-round results.
+
+Apps require HTTP transport, so the server runs on `StreamableHTTPServerTransport` over Express. The stdio entry was removed.
 
 ## Factions included
 
@@ -24,48 +30,105 @@ Built for a presentation demo to illustrate the **main building blocks of an MCP
 | `list_factions`  | _(none)_                   | Returns the full roster as a compact briefing.           |
 | `get_faction`    | `id: string`               | Returns the full (humorous) dossier for one faction.    |
 | `spar`           | `faction_a, faction_b: string` | Narrates a biased, non-canonical sparring match.      |
+| `spar_arena`     | _(none)_                   | Launches the interactive Spar Arena UI (MCP App).        |
+
+## Resources exposed
+
+| URI                          | Type       | What it returns                                  |
+| ---------------------------- | ---------- | ------------------------------------------------ |
+| `kungfu://jianghu/roster`    | static     | The full roster as markdown.                      |
+| `kungfu://factions/{id}`     | template   | A per-faction dossier as markdown (list + complete callbacks). |
+| `ui://spar-arena/app.html`   | app UI     | The bundled Spar Arena HTML (served via `registerAppResource`). |
 
 ## Quickstart
 
 ```bash
 npm install
-npm run build
+npm run build   # tsc (server) + vite build (UI → dist/mcp-app.html)
+npm start       # → http://localhost:3001/mcp
 ```
 
-### Try it with the MCP Inspector
+The server logs `kungfu-mcp listening on http://localhost:3001/mcp`.
+
+### Build outputs
+
+- `build/server.js` — compiled HTTP server entry (run by `npm start`).
+- `dist/mcp-app.html` — single-file UI bundle (inlined JS + CSS), served as the `ui://spar-arena/app.html` resource.
+
+## Inspecting with the MCP Inspector
+
+The Inspector is **not** an app host — it cannot render the `spar_arena` UI — but it is the fastest way to verify tools, resources, and templates:
 
 ```bash
-npm start
+npm run inspect
+# In the Inspector UI, set Transport Type: HTTP, URL: http://localhost:3001/mcp, Connect.
+# - Tools tab: call list_factions / get_faction / spar / spar_arena.
+# - Resources tab: browse kungfu://jianghu/roster and kungfu://factions/{id}.
+# - The spar_arena tool returns text; its UI renders only inside an app host.
 ```
 
-This launches the official `@modelcontextprotocol/inspector`, where you can call `list_factions`, `get_faction`, and `spar` from a UI.
+## Rendering the Spar Arena UI (app host)
 
-### Or wire it into an MCP client
+MCP Apps render inside an app host that fetches the `ui://` resource and displays it in a sandboxed iframe. The MCP Inspector does not do this. On Linux, use the `basic-host` from the ext-apps repo:
 
-Add the following to your client's server config (e.g. `claude_desktop_config.json`):
+```bash
+# one-time: clone the app host
+git clone https://github.com/modelcontextprotocol/ext-apps.git /tmp/ext-apps
+cd /tmp/ext-apps/examples/basic-host && npm install
 
-```json
-{
-  "mcpServers": {
-    "kungfu": {
-      "command": "node",
-      "args": ["/absolute/path/to/kungfu-mcp/build/index.js"]
-    }
-  }
-}
+# start the host (it points at your running server)
+SERVERS='["http://localhost:3001/mcp"]' npm start
+# → open http://localhost:8080, call spar_arena, the arena renders inline
 ```
+
+In the arena: pick two factions, press **Begin the Spar**, watch the rounds fade in, then open a dossier.
+
+### Alternative: Claude (web / Desktop)
+
+Apps can also render in Claude (web/Desktop) which is an app host. This requires a `cloudflared` tunnel exposing `http://localhost:3001/mcp` to the internet plus a paid Claude plan (Pro/Max/Team). Add the tunnel URL as a remote MCP server in Claude's settings. Not the primary local-dev path.
+
+## How it fits together
+
+```
+HTTP server (express + StreamableHTTPServerTransport) on :3001/mcp
+├── Tools (model-controlled)
+│   ├── list_factions        # roster briefing
+│   ├── get_faction          # single-faction dossier
+│   ├── spar                 # text narration
+│   └── spar_arena           # app tool: _meta.ui.resourceUri → triggers UI render
+├── Data resources (application-driven context)
+│   ├── kungfu://jianghu/roster      static, markdown
+│   └── kungfu://factions/{id}       template, markdown, list+complete callbacks
+└── UI resource (the app itself)
+    └── ui://spar-arena/app.html     bundled HTML, served from dist/
+```
+
+**Demo flow:** the LLM calls `spar_arena` → the host fetches `ui://spar-arena/app.html` → renders the arena inline → the arena calls `list_factions`, `spar`, and `get_faction` back on the server → renders animated results. The `ui://` resource is itself an MCP resource — **apps are resources that render**.
 
 ## Project layout
 
 ```
-package.json     # deps, "type":"module", build script
-tsconfig.json    # ES2022 / Node16, outDir build
+server.ts          # HTTP entry: express + cors + StreamableHTTPServerTransport on :3001/mcp
+vite.config.ts     # viteSingleFile(), input mcp-app.html → dist/mcp-app.html
+mcp-app.html       # UI entry: dropdowns, arena, styles
 src/
-  index.ts       # McpServer instance + 3 tools + stdio transport
-  data.ts        # KungfuFaction[] dataset (the heart of the humor)
+  mcp-app.ts       # UI logic: App class, populate dropdowns, spar, animate rounds, dossier
+  registry.ts      # registerAll(server, html): tools + data resources + app tool/resource
+  resources.ts     # kungfu://jianghu/roster + kungfu://factions/{id} (markdown)
+  data.ts          # KungfuFaction[] dataset (the heart of the humor)
 ```
+
+## Scripts
+
+| Script           | What it does                                              |
+| ---------------- | -------------------------------------------------------- |
+| `npm run build`  | `tsc` (server → `build/`) + `vite build` (UI → `dist/mcp-app.html`) |
+| `npm start`      | `node build/server.js` → http://localhost:3001/mcp       |
+| `npm run dev`    | `tsx server.ts` (run server without building)            |
+| `npm run inspect`| Launch the MCP Inspector (point it at the HTTP URL)      |
 
 ## Notes
 
 - This is a demo. All factions, fun facts, and spar outcomes are fabricated for entertainment.
-- The server logs to **stderr** only (stdout is reserved for JSON-RPC, per MCP stdio transport rules).
+- Resource content is English-only (markdown). The dataset in `data.ts` is the source of truth; any non-ASCII is stripped at resource-render time.
+- The server is HTTP-only (stdio was dropped because Apps require HTTP).
