@@ -1,4 +1,4 @@
-import { KUNGFU_FACTIONS, type KungfuFaction } from "./data.js";
+import { KUNGFU_FACTIONS, factionThreat, type KungfuFaction } from "./data.js";
 
 // Shared formatting for tools and resources: same data, same markdown —
 // the primitives differ only in who decides to fetch it.
@@ -12,7 +12,7 @@ export function threatLabel(level: number): string {
 
 export function rosterMarkdown(): string {
   const lines = KUNGFU_FACTIONS.map(
-    (f) => `- **${f.id}** — ${f.name} [threat ${f.threatLevel}/10] — "${f.catchphrase}"`,
+    (f) => `- **${f.id}** — ${f.name} [threat ${factionThreat(f)}/10] — "${f.catchphrase}"`,
   ).join("\n");
   return [
     "# The Kung Fu Roster",
@@ -30,12 +30,12 @@ export function profileMarkdown(f: KungfuFaction): string {
     `# ${f.name}`,
     "",
     `- **Faction:** ${f.faction}`,
-    `- **Threat Level:** ${f.threatLevel}/10 (${threatLabel(f.threatLevel)})`,
+    `- **Threat Level:** ${factionThreat(f)}/10 (${threatLabel(factionThreat(f))}) — the faction is only as scary as its scariest technique`,
     `- **Origin:** ${f.origin}`,
     `- **Philosophy:** ${f.philosophy}`,
     "",
     "## Signature Techniques",
-    ...f.signatureTechniques.map((t) => `- ${t}`),
+    ...f.signatureTechniques.map((t) => `- ${t.name} (threat ${t.threat}/10)`),
     "",
     "## Famous Practitioners",
     ...f.famousPractitioners.map((p) => `- ${p}`),

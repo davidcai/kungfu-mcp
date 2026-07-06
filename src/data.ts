@@ -1,14 +1,23 @@
+export interface SignatureTechnique {
+  name: string;
+  threat: number;
+}
+
 export interface KungfuFaction {
   id: string;
   name: string;
   faction: string;
   origin: string;
   philosophy: string;
-  signatureTechniques: string[];
+  signatureTechniques: SignatureTechnique[];
   famousPractitioners: string[];
   funFact: string;
-  threatLevel: number;
   catchphrase: string;
+}
+
+// A faction is only as scary as its scariest move.
+export function factionThreat(f: KungfuFaction): number {
+  return Math.max(...f.signatureTechniques.map((t) => t.threat));
 }
 
 export const KUNGFU_FACTIONS: KungfuFaction[] = [
@@ -20,9 +29,9 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     philosophy:
       "Zen and fists are one. Achieve enlightenment through punching and being punched. The body is a temple; the temple can also throw hands.",
     signatureTechniques: [
-      "Arhat Fist",
-      "Sweeping Leg of Regret",
-      "Iron Headbutt of Piety",
+      { name: "Arhat Fist", threat: 8 },
+      { name: "Sweeping Leg of Regret", threat: 6 },
+      { name: "Iron Headbutt of Piety", threat: 9 },
     ],
     famousPractitioners: [
       "Bodhidharma (allegedly, he denies it)",
@@ -31,7 +40,6 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     ],
     funFact:
       "Shaolin monks have been accused of inventing kungfu, Zen Buddhism, and the concept of a good cardio day, all in the same afternoon.",
-    threatLevel: 8,
     catchphrase: "The fist that prays also slays.",
   },
   {
@@ -43,14 +51,13 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     philosophy:
       "Use softness to overcome hardness. Win the fight by arriving late to it and yawning. The opponent's strength is the opponent's problem.",
     signatureTechniques: [
-      "Tai Chi Chuan",
-      "Wudang Sword of Inner Peace",
-      "Yielding Push That Ruins Lives",
+      { name: "Tai Chi Chuan", threat: 9 },
+      { name: "Wudang Sword of Inner Peace", threat: 7 },
+      { name: "Yielding Push That Ruins Lives", threat: 8 },
     ],
     famousPractitioners: ["Zhang Sanfeng", "Various Immortals", "One Determined Heron"],
     funFact:
       "A Wudang master once defeated seven opponents while literally taking a nap. The nap went on to become a grandmaster.",
-    threatLevel: 9,
     catchphrase: "I will defeat you with extreme relaxation.",
   },
   {
@@ -62,14 +69,13 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     philosophy:
       "Speed, grace, and a sharp blade. True elegance is making your opponent look clumsy before they fall.",
     signatureTechniques: [
-      "Emei Piercing Sword",
-      "Thousand-Mile Eyebrow Raise",
-      "Disapproving Sigh Slash",
+      { name: "Emei Piercing Sword", threat: 8 },
+      { name: "Thousand-Mile Eyebrow Raise", threat: 5 },
+      { name: "Disapproving Sigh Slash", threat: 7 },
     ],
     famousPractitioners: ["Abbess Miejue (no, she's not happy)", "Zhou Zhiruo", "Guo Xiang"],
     funFact:
       "The Emei school's training regimen is 80% swordplay and 20% perfecting the art of the cold stare.",
-    threatLevel: 7,
     catchphrase: "I could cut you, but my blade would judge me.",
   },
   {
@@ -81,9 +87,9 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     philosophy:
       "Solidarity of the downtrodden. Also: hitting people with a stick. The stick is key.",
     signatureTechniques: [
-      "Eighteen Dragon-Subduing Palms",
-      "Dog-Beating Staff Technique",
-      "Strategic Asking-For-Spare-Change Feint",
+      { name: "Eighteen Dragon-Subduing Palms", threat: 9 },
+      { name: "Dog-Beating Staff Technique", threat: 8 },
+      { name: "Strategic Asking-For-Spare-Change Feint", threat: 4 },
     ],
     famousPractitioners: [
       "Qiao Feng (legend, also tragic)",
@@ -92,7 +98,6 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     ],
     funFact:
       "The Dog-Beating Staff was named to honor a dog. The dog was not honored.",
-    threatLevel: 8,
     catchphrase: "Spare some change? No? Then spare some teeth.",
   },
   {
@@ -104,14 +109,13 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     philosophy:
       "If you fight fair, you've already lost. Why punch when you can throw a needle that makes the puncher cry and also die?",
     signatureTechniques: [
-      "Ten Thousand Poison Needles",
-      "Smoke Bomb of Polite Exit",
-      "The Handshake of Regret",
+      { name: "Ten Thousand Poison Needles", threat: 9 },
+      { name: "Smoke Bomb of Polite Exit", threat: 6 },
+      { name: "The Handshake of Regret", threat: 8 },
     ],
     famousPractitioners: ["The Tang Patriarch", "Several Apologetic Grandsons", "One Very Nervous Bride"],
     funFact:
       "A Tang Sect assassin's business card just says 'Sorry' in fancy calligraphy.",
-    threatLevel: 9,
     catchphrase: "We don't fight fair. We don't fight at all, ideally.",
   },
   {
@@ -123,9 +127,9 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     philosophy:
       "Sever all worldly ties. If you must love, love tragically. If you must fight, fight beautifully and then cry about it.",
     signatureTechniques: [
-      "Jade Maiden Sutra",
-      "Heart of Frozen Tears",
-      "The Longing Stare (debuff: opponent is now sad)",
+      { name: "Jade Maiden Sutra", threat: 8 },
+      { name: "Heart of Frozen Tears", threat: 7 },
+      { name: "The Longing Stare (debuff: opponent is now sad)", threat: 5 },
     ],
     famousPractitioners: [
       "Xiaolongnü (lives in a tomb, has never heard of brunch)",
@@ -134,7 +138,6 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     ],
     funFact:
       "Ancient Tomb Sect disciples are forbidden from laughing. The longest recorded streak of not-laughing is held by a statue.",
-    threatLevel: 7,
     catchphrase: "I feel nothing. (This is a technique, not a mood.)",
   },
   {
@@ -146,9 +149,9 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     philosophy:
       "Light will conquer darkness. The orthodox sects called us evil first, so we got matching outfits and a great anthem. Haters make you famous.",
     signatureTechniques: [
-      "Heaven and Earth Great Shift",
-      "Solar Flame Saber",
-      "Coordinated Group Disapproval",
+      { name: "Heaven and Earth Great Shift", threat: 9 },
+      { name: "Solar Flame Saber", threat: 8 },
+      { name: "Coordinated Group Disapproval", threat: 6 },
     ],
     famousPractitioners: [
       "Zhang Wuji (too nice for this, frankly)",
@@ -157,7 +160,6 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     ],
     funFact:
       "The Ming Cult was so good at being 'evil' that the actual Ming Dynasty borrowed their name. The Cult did not receive royalties.",
-    threatLevel: 9,
     catchphrase: "We're the villains? Bold of you to assume there's a script.",
   },
   {
@@ -169,9 +171,9 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     philosophy:
       "The sword is mightier than the pen. The pen, however, started the fight.",
     signatureTechniques: [
-      "Huashan Swordsmanship",
-      "Jade Maiden Nineteen Stances",
-      "The Pointed Comment",
+      { name: "Huashan Swordsmanship", threat: 8 },
+      { name: "Jade Maiden Nineteen Stances", threat: 7 },
+      { name: "The Pointed Comment", threat: 4 },
     ],
     famousPractitioners: [
       "Yue Buqun (smiles a lot, do NOT trust)",
@@ -180,7 +182,6 @@ export const KUNGFU_FACTIONS: KungfuFaction[] = [
     ],
     funFact:
       "The Huashan sect once divided into Qi and Sword factions after a debate that lasted three days. No one remembers who won. Everyone lost.",
-    threatLevel: 7,
     catchphrase: "We are the sword. We are also the problem.",
   },
 ];

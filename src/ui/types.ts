@@ -6,7 +6,14 @@ export type ProfileState =
   | { state: "loaded"; name: string; text: string }
   | { state: "error"; message: string };
 
-export type SparResult = { a: Faction; b: Faction; outcome: SparOutcome; sparId: number };
+export type SparResult = {
+  a: Faction;
+  b: Faction;
+  championA: string;
+  championB: string;
+  outcome: SparOutcome;
+  sparId: number;
+};
 
 export function textOf(result: { content?: Array<{ type: string; text?: string }> }): string {
   const item = result.content?.[0];

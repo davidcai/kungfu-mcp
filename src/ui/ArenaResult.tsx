@@ -6,15 +6,20 @@ import type { Faction, SparOutcome } from "./types";
 export function ArenaResult({
   a,
   b,
+  championA,
+  championB,
   outcome,
   onViewProfile,
 }: {
   a: Faction;
   b: Faction;
+  championA: string;
+  championB: string;
   outcome: SparOutcome;
   onViewProfile: (f: Faction) => void;
 }) {
   const winner = outcome.winnerId ? (outcome.winnerId === a.id ? a : b) : null;
+  const winnerName = winner ? (winner.id === a.id ? championA : championB) : null;
   const cardClass = (f: Faction) => (winner ? (f.id === winner.id ? " winner" : " loser") : "");
 
   return (
@@ -25,7 +30,7 @@ export function ArenaResult({
         <FactionCard faction={b} extraClass={cardClass(b)} />
       </div>
       <RoundList rounds={outcome.rounds} />
-      <Verdict outcome={outcome} winner={winner} />
+      <Verdict outcome={outcome} winnerName={winnerName} />
       <div style={{ marginTop: "0.75rem" }}>
         <button
           className="profile-btn"
