@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { KUNGFU_FACTIONS, findFaction, type KungfuFaction } from "./data.js";
-import { rosterMarkdown, dossierMarkdown } from "./format.js";
+import { rosterMarkdown, profileMarkdown } from "./format.js";
 
 type SparOutcome = { rounds: string[]; verdict: string; winnerId: string | null };
 
@@ -10,7 +10,7 @@ export function registerTools(server: McpServer): void {
     "list_factions",
     {
       description:
-        "List all major kungfu factions known to the jianghu. Returns a compact roster with each faction's id, name, threat level, and catchphrase. Use get_faction(id) for the full dossier.",
+        "List all major kungfu factions known to the jianghu. Returns a compact roster with each faction's id, name, threat level, and catchphrase. Use get_faction(id) for the full profile.",
       inputSchema: {},
       outputSchema: {
         factions: z.array(
@@ -40,7 +40,7 @@ export function registerTools(server: McpServer): void {
     "get_faction",
     {
       description:
-        "Retrieve the full dossier for a single kungfu faction by id. Includes origin, philosophy, signature techniques, famous practitioners, a fun fact, threat level, and a catchphrase. If you don't know the id, call list_factions first.",
+        "Retrieve the full profile for a single kungfu faction by id. Includes origin, philosophy, signature techniques, famous practitioners, a fun fact, threat level, and a catchphrase. If you don't know the id, call list_factions first.",
       inputSchema: {
         id: z
           .string()
@@ -64,7 +64,7 @@ export function registerTools(server: McpServer): void {
         };
       }
 
-      return { content: [{ type: "text", text: dossierMarkdown(faction) }] };
+      return { content: [{ type: "text", text: profileMarkdown(faction) }] };
     },
   );
 

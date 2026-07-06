@@ -5,7 +5,7 @@ A humorous [Model Context Protocol](https://modelcontextprotocol.io/) server, in
 This build demonstrates the **three MCP primitives side by side**:
 
 - **Tools** (model-controlled) — `list_factions`, `get_faction`, `spar`, and `spar_arena`.
-- **Resources** (application-driven context) — `kungfu://jianghu/roster` and `kungfu://factions/{id}` dossiers as markdown.
+- **Resources** (application-driven context) — `kungfu://jianghu/roster` and `kungfu://factions/{id}` profiles as markdown.
 - **Apps** (interactive UI rendered in chat) — `spar_arena` launches an inline arena built on a `ui://` resource. The UI calls tools back on the server (`list_factions`, `spar`, `get_faction`) and renders animated, round-by-round results.
 
 Apps require HTTP transport, so the server runs on `StreamableHTTPServerTransport` over Express. The stdio entry was removed.
@@ -28,7 +28,7 @@ Apps require HTTP transport, so the server runs on `StreamableHTTPServerTranspor
 | Tool             | Arguments                  | What it does                                              |
 | ---------------- | -------------------------- | -------------------------------------------------------- |
 | `list_factions`  | _(none)_                   | Roster as markdown + `structuredContent` (`{ factions }`) for the UI. |
-| `get_faction`    | `id: string`               | Returns the full (humorous) dossier for one faction as markdown. |
+| `get_faction`    | `id: string`               | Returns the full (humorous) profile for one faction as markdown. |
 | `spar`           | `faction_a, faction_b: string` | Biased narration + `structuredContent` (`{ rounds, verdict, winnerId }`). |
 | `spar_arena`     | _(none)_                   | Launches the interactive Spar Arena UI (MCP App).        |
 
@@ -37,7 +37,7 @@ Apps require HTTP transport, so the server runs on `StreamableHTTPServerTranspor
 | URI                          | Type       | What it returns                                  |
 | ---------------------------- | ---------- | ------------------------------------------------ |
 | `kungfu://jianghu/roster`    | static     | The full roster as markdown.                      |
-| `kungfu://factions/{id}`     | template   | A per-faction dossier as markdown (list + complete callbacks). |
+| `kungfu://factions/{id}`     | template   | A per-faction profile as markdown (list + complete callbacks). |
 | `ui://spar-arena/app.html`   | app UI     | The bundled Spar Arena HTML (served via `registerAppResource`). |
 
 ## Quickstart
@@ -81,7 +81,7 @@ SERVERS='["http://localhost:3001/mcp"]' npm start
 # → open http://localhost:8080, call spar_arena, the arena renders inline
 ```
 
-In the arena: pick two factions, press **Begin the Spar**, watch the rounds fade in, then open a dossier.
+In the arena: pick two factions, press **Begin the Spar**, watch the rounds fade in, then open a profile.
 
 ### Alternative: Claude (web / Desktop)
 
@@ -93,7 +93,7 @@ Apps can also render in Claude (web/Desktop) which is an app host. This requires
 HTTP server (express + StreamableHTTPServerTransport) on :3001/mcp
 ├── Tools (model-controlled)
 │   ├── list_factions        # roster briefing
-│   ├── get_faction          # single-faction dossier
+│   ├── get_faction          # single-faction profile
 │   ├── spar                 # text narration
 │   └── spar_arena           # app tool: _meta.ui.resourceUri → triggers UI render
 ├── Data resources (application-driven context)
@@ -115,7 +115,7 @@ src/               # one file per MCP primitive:
   tools.ts         #   Tools — list_factions, get_faction, spar (text + structuredContent)
   resources.ts     #   Resources — kungfu://jianghu/roster + kungfu://factions/{id} (markdown)
   app.ts           #   App — spar_arena tool + ui://spar-arena/app.html resource
-  mcp-app.ts       # UI logic: App class, populate dropdowns, spar, animate rounds, dossier
+  mcp-app.ts       # UI logic: App class, populate dropdowns, spar, animate rounds, profile
   format.ts        # shared markdown formatting (used by tools, resources, and the UI)
   data.ts          # KungfuFaction[] dataset (the heart of the humor)
 ```

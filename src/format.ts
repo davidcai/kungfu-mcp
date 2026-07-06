@@ -25,7 +25,7 @@ export function rosterMarkdown(): string {
   ].join("\n");
 }
 
-export function dossierMarkdown(f: KungfuFaction): string {
+export function profileMarkdown(f: KungfuFaction): string {
   return [
     `# ${f.name}`,
     "",

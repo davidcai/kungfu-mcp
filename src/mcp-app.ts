@@ -19,7 +19,7 @@ const statusEl = document.getElementById("status")!;
 const pickersEl = document.getElementById("pickers")!;
 const sparBtn = document.getElementById("spar-btn") as HTMLButtonElement;
 const arenaEl = document.getElementById("arena")!;
-const dossierEl = document.getElementById("dossier")!;
+const profileEl = document.getElementById("profile")!;
 const selA = document.getElementById("faction-a") as HTMLSelectElement;
 const selB = document.getElementById("faction-b") as HTMLSelectElement;
 
@@ -122,23 +122,23 @@ function renderArena(a: Faction, b: Faction, outcome: SparOutcome): void {
       <div class="vtext">${escapeHtml(outcome.verdict)}</div>
     </div>
     <div style="margin-top:0.75rem">
-      <button class="dossier-btn" style="margin-right:0.5rem" data-id="${a.id}">View ${escapeHtml(a.name)} dossier</button>
-      <button class="dossier-btn" data-id="${b.id}">View ${escapeHtml(b.name)} dossier</button>
+      <button class="profile-btn" style="margin-right:0.5rem" data-id="${a.id}">View ${escapeHtml(a.name)} profile</button>
+      <button class="profile-btn" data-id="${b.id}">View ${escapeHtml(b.name)} profile</button>
     </div>`;
 
-  for (const btn of arenaEl.querySelectorAll<HTMLButtonElement>(".dossier-btn")) {
-    btn.addEventListener("click", () => showDossier(btn.dataset.id!));
+  for (const btn of arenaEl.querySelectorAll<HTMLButtonElement>(".profile-btn")) {
+    btn.addEventListener("click", () => showProfile(btn.dataset.id!));
   }
 }
 
-async function showDossier(id: string): Promise<void> {
-  dossierEl.innerHTML = `<div class="dossier">Loading dossier…</div>`;
+async function showProfile(id: string): Promise<void> {
+  profileEl.innerHTML = `<div class="profile">Loading profile…</div>`;
   try {
     const result = await app.callServerTool({ name: "get_faction", arguments: { id } });
     const f = factions.find((x) => x.id === id);
-    dossierEl.innerHTML = `<div class="dossier"><h4>${escapeHtml(f?.name ?? id)} — Dossier</h4>${escapeHtml(textOf(result))}</div>`;
+    profileEl.innerHTML = `<div class="profile"><h4>${escapeHtml(f?.name ?? id)} — Profile</h4>${escapeHtml(textOf(result))}</div>`;
   } catch (e) {
-    dossierEl.innerHTML = `<div class="dossier err">Failed: ${(e as Error).message}</div>`;
+    profileEl.innerHTML = `<div class="profile err">Failed: ${(e as Error).message}</div>`;
   }
 }
 

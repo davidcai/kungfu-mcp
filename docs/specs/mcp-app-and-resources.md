@@ -16,7 +16,7 @@ MCP Apps are built **on top of** resources — the interactive UI is itself serv
 
 | Primitive | Role in demo | Control flow |
 |---|---|---|
-| **Data resources** (`kungfu://factions/{id}`) | Faction dossiers as markdown context | Application-driven (host picks URI) |
+| **Data resources** (`kungfu://factions/{id}`) | Faction profiles as markdown context | Application-driven (host picks URI) |
 | **UI resource** (`ui://spar-arena/app.html`) | Interactive HTML app | Model-invoked via tool `_meta.ui.resourceUri` |
 | **Tools** (`list_factions`, `spar`, etc.) | Called by both the LLM *and* the app UI | Bidirectional |
 
@@ -53,7 +53,7 @@ MCP Apps require HTTP transport — the host fetches the `ui://` resource and re
 - Two faction dropdowns (populated via `app.callServerTool("list_factions")` on load), each showing name + color-coded threat level
 - "Begin the Spar" button → calls `app.callServerTool("spar", { faction_a, faction_b })`
 - Results area: two faction cards facing off (emoji emblems, threat bars), round cards that **fade-in one by one**, verdict banner with winner highlighted + catchphrase
-- "View Dossier" buttons → call `get_faction`, render inline
+- "View Profile" buttons → call `get_faction`, render inline
 
 **Tech:** vanilla TS + CSS (no framework — keeps the demo dependency-light and easy to read). Uses `App` from `@modelcontextprotocol/ext-apps` for `connect()`, `ontoolresult`, `callServerTool`.
 
@@ -101,7 +101,7 @@ registerAppResource(server, resourceUri, resourceUri,
 ## Data resources
 
 - `kungfu://jianghu/roster` — static, full roster as markdown
-- `kungfu://factions/{id}` — template with `list` + `complete` callbacks, faction dossier as markdown
+- `kungfu://factions/{id}` — template with `list` + `complete` callbacks, faction profile as markdown
 - Content is English-only (Chinese stripped from `data.ts` content at render time; `data.ts` itself unchanged)
 
 ---
@@ -200,5 +200,5 @@ Implemented after the initial build; supersedes the file map and two decisions a
 
 - `src/registry.ts` was split by primitive: `src/tools.ts` (tools), `src/resources.ts` (data resources), `src/app.ts` (app tool + `ui://` resource). `server.ts` calls the three registrars directly.
 - `list_factions` and `spar` now declare an `outputSchema` and return `structuredContent` alongside the humorous text. The app UI consumes the structured data instead of regex-parsing prose, and the server's `winnerId` is the single source of truth for the arena verdict.
-- Shared markdown formatting (`threatLabel`, `rosterMarkdown`, `dossierMarkdown`) lives in `src/format.ts`, used by tools, resources, and the UI bundle. Tools return the same markdown as resources.
+- Shared markdown formatting (`threatLabel`, `rosterMarkdown`, `profileMarkdown`) lives in `src/format.ts`, used by tools, resources, and the UI bundle. Tools return the same markdown as resources.
 - The "strip Chinese at render time" decision is obsolete: `data.ts` is English-only, so the defensive `stripChinese` pass was removed.
