@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useApp } from "@modelcontextprotocol/ext-apps/react";
 import { ArenaResult } from "./ArenaResult";
+import { CharacterPanel } from "./CharacterPanel";
 import { ProfilePanel } from "./ProfilePanel";
+import neoImg from "./assets/neo.jpeg";
+import morpheusImg from "./assets/morpheus.jpeg";
 import { textOf, type Faction, type ProfileState, type SparOutcome, type SparResult } from "./types";
 
 export function ArenaApp() {
@@ -115,27 +118,15 @@ export function ArenaApp() {
       <div className={"status" + (status.isError ? " err" : "")}>{status.message}</div>
       {ready && (
         <section className="pickers">
-          <label>
-            Faction A
-            <select id="faction-a" value={selA} onChange={(e) => setSelA(e.target.value)}>
-              {factions.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name} — threat {f.threat}/10
-                </option>
-              ))}
-            </select>
-          </label>
+          <CharacterPanel name="Neo" image={neoImg} factions={factions} value={selA} onChange={setSelA} />
           <span className="vs">vs</span>
-          <label>
-            Faction B
-            <select id="faction-b" value={selB} onChange={(e) => setSelB(e.target.value)}>
-              {factions.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name} — threat {f.threat}/10
-                </option>
-              ))}
-            </select>
-          </label>
+          <CharacterPanel
+            name="Morpheus"
+            image={morpheusImg}
+            factions={factions}
+            value={selB}
+            onChange={setSelB}
+          />
         </section>
       )}
       {ready && (
