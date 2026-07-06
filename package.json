@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && tsc -p tsconfig.ui.json && vite build",
-    "start": "node build/server.js",
+    "start": "npm run build && node build/server.js",
     "dev": "tsx server.ts",
     "inspect": "npx @modelcontextprotocol/inspector"
   },
