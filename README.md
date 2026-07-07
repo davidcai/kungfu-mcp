@@ -8,7 +8,7 @@ It demonstrates the **three MCP primitives side by side**:
 - **Resources** (application-driven context) — `kungfu://kungfu/roster` and `kungfu://factions/{id}` profiles as markdown.
 - **Apps** (interactive UI rendered in chat) — `spar_arena` launches an inline arena built on a `ui://` resource that calls tools back on the server.
 
-The server runs on `StreamableHTTPServerTransport` over Express (Apps require HTTP transport).
+The server runs on `WebStandardStreamableHTTPServerTransport` over Hono (Apps require HTTP transport).
 
 ---
 
@@ -103,7 +103,7 @@ Apps also render in Claude (web/Desktop) via a `cloudflared` tunnel + paid plan 
 ## Project layout
 
 ```
-server.ts          # HTTP entry: express + cors + StreamableHTTPServerTransport on :3001/mcp
+server.ts          # HTTP entry: hono + @hono/node-server + WebStandardStreamableHTTPServerTransport on :3001/mcp
 vite.config.ts     # react() + viteSingleFile(), input mcp-app.html → dist/mcp-app.html
 mcp-app.html       # UI shell: #root div + src/ui/main.tsx script tag
 src/               # one file per MCP primitive:
