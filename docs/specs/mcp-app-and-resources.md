@@ -27,7 +27,7 @@ MCP Apps are built **on top of** resources — the interactive UI is itself serv
 ## Architecture
 
 ```
-HTTP server (express + StreamableHTTPServerTransport) on :3001/mcp
+HTTP server (Hono + WebStandardStreamableHTTPServerTransport) on :3001/mcp
 ├── Tools (model-controlled)
 │   ├── list_factions        # existing, unchanged
 │   ├── get_faction          # existing, unchanged
@@ -63,7 +63,7 @@ MCP Apps require HTTP transport — the host fetches the `ui://` resource and re
 
 | File | Action | Purpose |
 |---|---|---|
-| `server.ts` | **NEW** | HTTP entry: express + cors + StreamableHTTPServerTransport on :3001/mcp |
+| `server.ts` | **NEW** | HTTP entry: Hono + hono/cors + WebStandardStreamableHTTPServerTransport on :3001/mcp |
 | `vite.config.ts` | **NEW** | `viteSingleFile()` plugin, input `mcp-app.html` → `dist/mcp-app.html` |
 | `mcp-app.html` | **NEW** | UI entry: dropdowns, arena, styles |
 | `src/ui/` | **NEW** | React UI: `useApp` hook, populate dropdowns, call `spar`/`get_faction`, animate rounds (was `src/mcp-app.ts`, migrated per `react-migration-v2.md`) |
@@ -71,7 +71,7 @@ MCP Apps require HTTP transport — the host fetches the `ui://` resource and re
 | `src/resources.ts` | **NEW** | `kungfu://kungfu/roster` + `kungfu://factions/{id}` (markdown, English-only) |
 | `src/data.ts` | unchanged | Source of truth (keep Chinese here; resources strip it) |
 | `src/index.ts` | **DELETE** | stdio entry, no longer needed (HTTP only) |
-| `package.json` | edit | +ext-apps, +express, +cors; dev: +vite, +vite-plugin-singlefile, +tsx; new scripts |
+| `package.json` | edit | +ext-apps, +hono, +@hono/node-server; dev: +vite, +vite-plugin-singlefile, +tsx; new scripts |
 | `tsconfig.json` | edit | `moduleResolution: bundler`, include `*.ts` + `src/**/*` |
 | `.gitignore` | edit | add `dist/` |
 | `README.md` | edit | new build/run/test instructions, basic-host setup |
@@ -119,8 +119,8 @@ registerAppResource(server, resourceUri, resourceUri,
 
 ## Dependencies to add
 
-- **runtime:** `@modelcontextprotocol/ext-apps`, `express`, `cors`
-- **dev:** `vite`, `vite-plugin-singlefile`, `tsx`, `@types/express`, `@types/cors`
+- **runtime:** `@modelcontextprotocol/ext-apps`, `hono`, `@hono/node-server`
+- **dev:** `vite`, `vite-plugin-singlefile`, `tsx`
 
 ---
 

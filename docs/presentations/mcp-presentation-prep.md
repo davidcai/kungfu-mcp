@@ -89,7 +89,7 @@
 ```
 ┌─────────────┐        ┌──────────────────────────┐
 │  Host        │  MCP   │  kungfu-mcp server        │
-│  (Inspector, │◄──────►│  Express + Streamable     │
+│  (Inspector, │◄──────►│  Hono + Streamable        │
 │  basic-host, │  HTTP  │  HTTP on :3001/mcp        │
 │  Claude, …)  │        │  tools · resources · app  │
 └─────────────┘        └──────────────────────────┘
@@ -282,7 +282,7 @@ LLM/user calls spar_arena ─► host renders ui:// iframe
 
 **On slide (annotated, from [server.ts:54](../../server.ts)):**
 ```ts
-const transport = new StreamableHTTPServerTransport({
+const transport = new WebStandardStreamableHTTPServerTransport({
   sessionIdGenerator: () => newSessionId,
 });
 const server = new McpServer({ name: "kungfu-mcp", version: "1.0.0" });
@@ -291,11 +291,11 @@ registerDataResources(server);  // src/resources.ts — roster + profiles
 registerApp(server, bundledHtml); // src/app.ts    — arena tool + ui:// resource
 await server.connect(transport);
 ```
-- Express + CORS (must expose the `mcp-session-id` header for browser hosts)
+- Hono + hono/cors (must expose the `mcp-session-id` header for browser hosts)
 - One `McpServer` + transport **per session**, tracked in a `Map`
-- Total: **92-line entrypoint, ~630 lines of server code, ~350 lines of React**
+- Total: **87-line entrypoint, ~630 lines of server code, ~350 lines of React**
 
-**Speaker notes:** File-per-primitive layout is deliberate and worth copying: `tools.ts`, `resources.ts`, `app.ts`, shared `data.ts` + `format.ts`. One subtle production lesson in this file: the session id is generated and registered in the map *before* handling the request — otherwise the client's immediate follow-up request races the map insert and 400s ([server.ts:50](../../server.ts)).
+**Speaker notes:** File-per-primitive layout is deliberate and worth copying: `tools.ts`, `resources.ts`, `app.ts`, shared `data.ts` + `format.ts`. One subtle production lesson in this file: the session id is generated and registered in the map *before* handling the request — otherwise the client's immediate follow-up request races the map insert and 400s ([server.ts:52](../../server.ts)).
 
 ### Slide 18: The recipe
 
@@ -385,7 +385,7 @@ SERVERS='["http://localhost:3001/mcp"]' npm start    # → http://localhost:8080
 - Spar mechanics ([src/tools.ts:143](../../src/tools.ts)): 3 rounds; each round randomly picks one signature technique per side; scores are summed threat values; higher total wins; ties are declared "a classic."
 - Champion names (`champion_a`/`champion_b`, e.g. Neo/Morpheus) replace faction names in narration only — scoring is per-faction.
 - Resource URIs (the MCP contract — quote exactly): `kungfu://kungfu/roster`, `kungfu://factions/{id}`, `ui://spar-arena/app.html`.
-- Transport: Streamable HTTP only (`StreamableHTTPServerTransport`); stdio was dropped because Apps require HTTP.
+- Transport: Streamable HTTP only (`WebStandardStreamableHTTPServerTransport`); stdio was dropped because Apps require HTTP.
 - Line counts: server ~630 lines (entrypoint 92), UI ~350 lines; bundled UI ~487 KB single file.
 - MCP: open standard, open-sourced by Anthropic Nov 2024; JSON-RPC 2.0; SDKs in TypeScript, Python, and more; spec at modelcontextprotocol.io.
 - MCP Apps: official extension, repo `modelcontextprotocol/ext-apps`; host renders `ui://` resources in a sandboxed iframe; UI uses the `useApp` React hook and `app.callServerTool`.
