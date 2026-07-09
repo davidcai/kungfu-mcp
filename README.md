@@ -1,5 +1,7 @@
 # kungfu-mcp
 
+> 🎬 **Live presentation:** https://davidcai.github.io/kungfu-mcp/presentations/
+
 A humorous [Model Context Protocol](https://modelcontextprotocol.io/) server, in TypeScript, that catalogs the major factions of the **kung fu world** (the martial-arts underworld) and narrates sparring matches between them.
 
 It demonstrates the **three MCP primitives side by side**:
@@ -63,29 +65,17 @@ Then exercise each primitive:
 
 ---
 
-## Rendering the Spar Arena UI
+## Using kungfu-mcp in Cursor
 
-MCP Apps render inside an **app host** that fetches the `ui://` resource into a sandboxed iframe. Any host that supports the MCP Apps extension works — the Inspector (above) does not, but the following do:
-
-**Cursor (2.6+) — no extra setup.** Cursor is a native MCP Apps host. Point it at the running server in `~/.cursor/mcp.json` (or project `.cursor/mcp.json`) and call `spar_arena`; the arena renders inline in the chat as part of the tool result:
+[Cursor](https://cursor.com/) 2.6+ is a native MCP Apps host — point it at the running server and `spar_arena` renders inline in the chat as an interactive iframe. Add the server to `~/.cursor/mcp.json` (or project `.cursor/mcp.json`):
 
 ```json
 { "mcpServers": { "kungfu": { "type": "http", "url": "http://localhost:3001/mcp" } } }
 ```
 
-**ext-apps `basic-host` — standalone**, for testing without an IDE:
+Then call `spar_arena`, pick two factions (e.g. Neo vs. Morpheus), and press **Begin the Spar**.
 
-```bash
-git clone https://github.com/modelcontextprotocol/ext-apps.git /tmp/ext-apps
-cd /tmp/ext-apps/examples/basic-host && npm install
-SERVERS='["http://localhost:3001/mcp"]' npm start   # → http://localhost:8080
-```
-
-Open the host, call `spar_arena`, pick two factions (e.g. Neo vs. Morpheus), press **Begin the Spar**.
-
-**Claude (web/Desktop)** also renders it, via a `cloudflared` tunnel + paid plan.
-
-> Progressive enhancement: hosts without MCP Apps support just get `spar_arena`'s text result, so the server stays usable everywhere.
+> Progressive enhancement: hosts without MCP Apps support just get `spar_arena`'s text result, so the server stays usable everywhere. Other app-capable hosts (e.g. Claude web/Desktop via a `cloudflared` tunnel + paid plan) also render the arena.
 
 ---
 
