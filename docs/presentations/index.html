@@ -241,10 +241,10 @@
       background: var(--bg);
       padding: clamp(40px, 6vw, 80px) clamp(40px, 8vw, 120px);
       overflow-y: auto;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.18s ease;
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity 0.18s ease, visibility 0s linear 0.18s;
     }
-    #notes-overlay.open { opacity: 1; pointer-events: auto; }
+    #notes-overlay.open { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity 0.18s ease, visibility 0s linear 0s; }
     #notes-overlay .n-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 12px; }
     #notes-overlay .n-title { font-family: var(--font-display); font-size: 32px; line-height: 1.15; margin: 0 0 20px; max-width: 24ch; }
     #notes-overlay .n-body { font-size: 19px; line-height: 1.6; color: var(--fg); max-width: 68ch; }
@@ -281,6 +281,13 @@
     @media (prefers-reduced-motion: reduce) {
       body { scroll-behavior: auto; }
       #notes-overlay, .deck-progress { transition: none; }
+    }
+
+    @media print {
+      html, body { display:block; overflow:visible; height:auto; scroll-snap-type:none; }
+      .slide { width:100%; height:100vh; flex:none; page-break-after:always; break-after:page; overflow:hidden; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      .slide:last-child { page-break-after:auto; break-after:auto; }
+      .deck-progress, .deck-counter, .deck-hint, #notes-btn, #notes-overlay { display:none !important; }
     }
   </style>
 </head>
@@ -598,9 +605,9 @@
 
   <!-- chrome -->
   <div class="deck-progress" id="deck-progress" aria-hidden></div>
-  <div class="deck-counter"  id="deck-counter">1 / 18</div>
+  <div class="deck-counter"  id="deck-counter">1 / 19</div>
   <div class="deck-hint">← / → · scroll · N = notes</div>
-  <button id="notes-btn" type="button">N · speaker notes</button>
+  <button id="notes-btn" type="button" aria-expanded="false" aria-controls="notes-overlay">N · speaker notes</button>
   <div id="notes-overlay" aria-hidden="true">
     <button class="n-close" type="button">close (Esc)</button>
     <p class="n-eyebrow" id="n-eyebrow"></p>
@@ -729,8 +736,8 @@
         nTitle.textContent = label;
         nBody.innerHTML = note ? note.innerHTML : '<p>No notes for this slide.</p>';
       }
-      function show() { render(); lastFocused = document.activeElement; overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false'); open = true; var c = overlay.querySelector('.n-close'); if (c) c.focus(); }
-      function hide() { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); open = false; if (lastFocused && lastFocused.focus) { try { lastFocused.focus({ preventScroll: true }); } catch (_) {} } else { btn.focus(); } }
+      function show() { render(); lastFocused = document.activeElement; overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); open = true; var c = overlay.querySelector('.n-close'); if (c) c.focus(); }
+      function hide() { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false'); open = false; if (lastFocused && lastFocused.focus) { try { lastFocused.focus({ preventScroll: true }); } catch (_) {} } else { btn.focus(); } }
       function toggle() { open ? hide() : show(); }
 
       btn.addEventListener('click', toggle);
