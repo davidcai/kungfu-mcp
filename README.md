@@ -63,9 +63,17 @@ Then exercise each primitive:
 
 ---
 
-## Rendering the Spar Arena UI (optional — needs an app host)
+## Rendering the Spar Arena UI
 
-MCP Apps render inside an app host that fetches the `ui://` resource into a sandboxed iframe. The Inspector does not do this; use the `basic-host` from the ext-apps repo:
+MCP Apps render inside an **app host** that fetches the `ui://` resource into a sandboxed iframe. Any host that supports the MCP Apps extension works — the Inspector (above) does not, but the following do:
+
+**Cursor (2.6+) — no extra setup.** Cursor is a native MCP Apps host. Point it at the running server in `~/.cursor/mcp.json` (or project `.cursor/mcp.json`) and call `spar_arena`; the arena renders inline in the chat as part of the tool result:
+
+```json
+{ "mcpServers": { "kungfu": { "type": "http", "url": "http://localhost:3001/mcp" } } }
+```
+
+**ext-apps `basic-host` — standalone**, for testing without an IDE:
 
 ```bash
 git clone https://github.com/modelcontextprotocol/ext-apps.git /tmp/ext-apps
@@ -73,9 +81,11 @@ cd /tmp/ext-apps/examples/basic-host && npm install
 SERVERS='["http://localhost:3001/mcp"]' npm start   # → http://localhost:8080
 ```
 
-Open the host, call `spar_arena`, pick a faction for Neo and one for Morpheus, press **Begin the Spar**.
+Open the host, call `spar_arena`, pick two factions (e.g. Neo vs. Morpheus), press **Begin the Spar**.
 
-Apps also render in Claude (web/Desktop) via a `cloudflared` tunnel + paid plan — not the primary local-dev path.
+**Claude (web/Desktop)** also renders it, via a `cloudflared` tunnel + paid plan.
+
+> Progressive enhancement: hosts without MCP Apps support just get `spar_arena`'s text result, so the server stays usable everywhere.
 
 ---
 
